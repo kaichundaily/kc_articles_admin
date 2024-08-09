@@ -4,7 +4,7 @@ import {
   HomeOutlined
 } from "@ant-design/icons-vue";
 import logo from "@/assets/logo.jpg";
-import { h, ref, watch} from "vue";
+import { h, onMounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router"; // 引入 useRouter
 const router = useRouter(); // 获取 router 实例
 const route = useRoute();
@@ -19,8 +19,6 @@ const iconMap = ref({
 })
 // 获取当前的路由菜单
 const routers = router.options.routes
-// 获得菜单列表
-items.value = processRouters(routers)
 // 图标的字符转化
 const getIconComponent = (iconName) => {
   return iconName ? h(iconMap.value[iconName]) : null
@@ -51,7 +49,8 @@ const  processRouters = (routers) => {
     return null
   }).filter(Boolean).flat()
 }
-
+// 获得菜单列表
+items.value = processRouters(routers)
 
 // 根据 key 查找菜单项
 const findMenuItemByKey = (key, items) => {

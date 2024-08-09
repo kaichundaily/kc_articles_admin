@@ -12,6 +12,7 @@ const changeCollapsed = () => {
 }
 
 </script>
+
 <template>
   <a-layout>
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible class="a-layout-sider" theme="light" width="200">
@@ -24,7 +25,9 @@ const changeCollapsed = () => {
       <content-view />
     </a-layout>
   </a-layout>
+<!--  <div>草泥马的</div>-->
 </template>
+
 <style scoped lang='scss'>
 .a-layout-sider {
   height: 100vh;
