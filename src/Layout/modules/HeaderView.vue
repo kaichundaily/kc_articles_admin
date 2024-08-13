@@ -54,7 +54,8 @@ const handleOk = () => {
           <a-sub-menu>
             <template #title>
               <!--可根据回传数据是否有头像数据来进行显示-->
-              <a-avatar shape="square">U</a-avatar>
+              <a-avatar v-if="useStore.userInfo.avatar" shape="square" :src="useStore.userInfo.avatar"></a-avatar>
+              <a-avatar v-else shape="square">U</a-avatar>
             </template>
 <!--            <a-menu-item key="1" @click="router.push('/userinfo')">-->
             <a-menu-item key="1" >

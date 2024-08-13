@@ -23,7 +23,12 @@ const  login = async () => {
   console.log(formModel.value.username)
   try {
     const res = await userLoginService(formModel.value)
-    userStore.setToken(res.Data.token)
+    userStore.setToken(res.data.token)
+    userStore.setUserInfo({
+      id: res.data.id,
+      username: res.data.username,
+      avatar: res.data.avatar,
+    })
     message.success('登录成功')
 
     router.push("/")

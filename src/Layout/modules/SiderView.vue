@@ -3,8 +3,8 @@ import {
   UserOutlined,
   HomeOutlined
 } from "@ant-design/icons-vue";
-import logo from "@/assets/logo.jpg";
-import { h, onMounted, ref, watch } from "vue";
+import Logo from "@/assets/logo.jpg"
+import { h, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router"; // 引入 useRouter
 const router = useRouter(); // 获取 router 实例
 const route = useRoute();
@@ -19,6 +19,7 @@ const iconMap = ref({
 })
 // 获取当前的路由菜单
 const routers = router.options.routes
+console.log(routers)
 // 图标的字符转化
 const getIconComponent = (iconName) => {
   return iconName ? h(iconMap.value[iconName]) : null
@@ -115,7 +116,7 @@ const findMenuItemByPath = (path, items) => {
   <!--logo-->
   <div class="logo">
     <router-link to="/dashboard">
-      <a-avatar shape="square" :src='logo' :size="40" />
+      <a-avatar shape="square" :src='Logo' :size="40" />
     </router-link>
   </div>
   <!--菜单-->
