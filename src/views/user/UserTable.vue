@@ -1,6 +1,6 @@
 <script setup>
-import {onMounted, ref} from "vue";
-import { getAllUserInfos } from '@/api/user.js'
+import { onMounted, ref } from "vue";
+import { getAllUser } from '@/api/user.js'
 const columns = ref([
   {
     title: 'ID',
@@ -29,12 +29,25 @@ const columns = ref([
   }
 ])
 
+
+
+const pagination = ref({
+  current: 1,
+  pageSize: 10,
+  total: 0,
+  showSizeChanger: true,
+  pageSizeOptions: ['2', '5', '10', '20', '50',],
+  onChange: (page, size) => getAllUserInfo(page, size)
+})
 const data = ref([])
 const loading = ref(false)
-const getAllUserInfo = async () => {
+const getAllUserInfo = async (page, size) => {
   loading.value = true
-  const res = await getAllUserInfos()
+  const res = await getAllUser()
   data.value = res.data.data
+  pagination.value.current = page
+  pagination.value.pageSize = size
+  pagination.value.total = res.data.data.total
   loading.value = false
 }
 
@@ -48,7 +61,12 @@ onMounted(() => {
     <div>
       <a-button type="primary">添加用户</a-button>
     </div>
-    <a-table :columns="columns" :data-source="data" :loading="loading">
+    <a-table
+        :columns="columns"
+        :data-source="data"
+        :loading="loading"
+        :pagination="pagination"
+    >
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'ID'">
           {{ record.ID }}
