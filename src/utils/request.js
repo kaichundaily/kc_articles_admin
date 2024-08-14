@@ -30,11 +30,11 @@ instance.interceptors.response.use(
         if (res.data.code === 200) {
             return res.data
         }
-        message.error({ message: res.data.Message || '服务异常', type: 'error' })
+        message.error({ message: res.data.message || '服务异常', type: 'error' })
         return Promise.reject(res.data)
     },
     (err) => {
-        message.error({ message: err.response.data.Message || '服务异常', type: 'error' })
+        message.error({ message: err.response.data.message || '服务异常', type: 'error' })
         if (err.response?.status === 401) {
             router.push('/login')
         }

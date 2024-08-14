@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router
 import Login from '@/views/login/LoginView.vue'
 import Error from '@/views/error/ErrorView.vue'
 import { useUserStore } from "@/stores/index.js";
+import { message } from "ant-design-vue";
 
 const routes = [
   {
