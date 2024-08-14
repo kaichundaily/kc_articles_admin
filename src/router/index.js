@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import Login from '@/views/login/LoginView.vue'
 import Error from '@/views/error/ErrorView.vue'
+import Layout from '@/Layout/MainLayout.vue'
 import { useUserStore } from "@/stores/index.js";
 import { message } from "ant-design-vue";
 
@@ -9,7 +10,7 @@ const routes = [
     path: '/',
     // name: 'home',
     redirect: '/dashboard',
-    component: () => import( '@/Layout/MainLayout.vue'),
+    component: Layout,
     meta: {
       title: '系统'
     },
@@ -25,7 +26,6 @@ const routes = [
       },
       {
         path: '',
-        name: 'user',
         meta: {
           title: '用户',
           key: '2',
@@ -51,7 +51,8 @@ const routes = [
   },
   {
     path: '/:pathMatch(.*)*',
-    component: Error
+    component: Error,
+    name: 'error'
   },
 ]
 

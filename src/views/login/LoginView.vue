@@ -31,10 +31,9 @@ const  login = async () => {
     })
     message.success('登录成功')
 
-    router.push("/")
+    await router.push("/")
   } catch (error) {
     message.error('登录失败')
-    return
   }
 }
 
