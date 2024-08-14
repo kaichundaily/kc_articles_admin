@@ -6,3 +6,7 @@ export const userLoginService = async ({ username, password }) => {
         password
     })
 }
+
+export const getAllUserInfos = async () =>  {
+    return await request.get('/api/getAllUserInfo')
+}

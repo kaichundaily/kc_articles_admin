@@ -19,7 +19,6 @@ const iconMap = ref({
 })
 // 获取当前的路由菜单
 const routers = router.options.routes
-console.log(routers)
 // 图标的字符转化
 const getIconComponent = (iconName) => {
   return iconName ? h(iconMap.value[iconName]) : null
