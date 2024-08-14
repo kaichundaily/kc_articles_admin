@@ -4,7 +4,7 @@ import { ref, watch } from 'vue'
 
 export const useUserStore = defineStore("users", () => {
         // 1. token相关内容
-        const token = ref(localStorage.getItem('token') || '')
+        const  token = ref('')
         // 1.1. 设置token
         const setToken = (newToken) => {
             token.value = newToken
@@ -21,14 +21,6 @@ export const useUserStore = defineStore("users", () => {
         const setUserInfo = (newUserInfo) => {
             userInfo.value = newUserInfo
         }
-        // 手动持久化
-        watch(token, (newToken) => {
-            if (newToken) {
-                localStorage.setItem('token', newToken)
-            } else {
-                localStorage.removeItem('token')
-            }
-        })
 
         return {
             token,
@@ -39,15 +31,7 @@ export const useUserStore = defineStore("users", () => {
         }
     },
     // 设置持久化保存
-    // {
-    //     persist: true,
-    //     strategies: [
-    //         {
-    //             // persist: true,
-    //             key: 'token',
-    //             storage: localStorage,
-    //             path: ['token'],
-    //         }
-    //     ]
-    // }
+    {
+        persist: true,
+    }
 )
