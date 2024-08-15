@@ -1,6 +1,8 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import { getAllUser } from '@/api/user.js'
+import { message } from "ant-design-vue";
+
 const columns = ref([
   {
     title: 'ID',
@@ -37,23 +39,31 @@ const pagination = ref({
   total: 0,
   showSizeChanger: true,
   pageSizeOptions: ['2', '5', '10', '20', '50',],
-  onChange: (page, size) => getAllUserInfo(page, size)
+  onChange: (page, size) => {
+    pagination.value.current = page
+    pagination.value.pageSize = size
+    getAllUserInfo(page, size)
+  }
 })
 const data = ref([])
 const loading = ref(false)
 const getAllUserInfo = async (page, size) => {
   loading.value = true
-  const res = await getAllUser()
+  console.log(typeof page)
+  let res = null
+  try {
+    res = await getAllUser(page, size)
+  } catch (err) {
+    message.error("查询失败")
+    loading.value = false
+    return
+  }
+  // const res = await getAllUser(page, size)
   data.value = res.data.data
-  pagination.value.current = page
-  pagination.value.pageSize = size
-  pagination.value.total = res.data.data.total
+  pagination.value.total = res.data.total
   loading.value = false
 }
-
-onMounted(() => {
-  getAllUserInfo()
-})
+getAllUserInfo(1, 10)
 </script>
 
 <template>

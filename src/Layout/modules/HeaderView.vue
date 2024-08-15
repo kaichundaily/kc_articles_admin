@@ -67,10 +67,6 @@ const handleOk = () => {
               <FormOutlined />
               修改密码
             </a-menu-item>
-            <a-menu-item key="3">
-              <QuestionOutlined />
-              忘记密码
-            </a-menu-item>
             <a-menu-item key="4" @click="showModel">
               <LogoutOutlined />
               退出登录

@@ -7,6 +7,11 @@ export const userLoginService = async ({ username, password }) => {
     })
 }
 
-export const getAllUser = async () =>  {
-    return await request.get('/api/getAllUserInfo')
+export const getAllUser = async (page, size) =>  {
+    return await request.get('/api/getAllUserInfo', {
+        params: {
+            page: page,
+            size: size
+        }
+    })
 }
