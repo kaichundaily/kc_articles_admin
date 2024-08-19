@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 
 
 export const useUserStore = defineStore("users", () => {
@@ -17,9 +17,14 @@ export const useUserStore = defineStore("users", () => {
         // 2. avatar相关
         const userInfo = ref({})
 
-        // 2.2 设置avatar
+        // 2.1 设置avatar
         const setUserInfo = (newUserInfo) => {
             userInfo.value = newUserInfo
+        }
+
+        // 2.2 清除token
+        const removeUserInfo = () => {
+            userInfo.value = ''
         }
 
         return {
@@ -27,7 +32,8 @@ export const useUserStore = defineStore("users", () => {
             setToken,
             removeToken,
             userInfo,
-            setUserInfo
+            setUserInfo,
+            removeUserInfo
         }
     },
     // 设置持久化保存

@@ -41,6 +41,24 @@ const routes = [
             }
           }
         ]
+      },
+      {
+        path: '',
+        meta: {
+          title: '文章',
+          key: '3',
+          icon: 'SnippetsOutlined'
+        },
+        children: [
+          {
+            path: '/articleTable',
+            component: () => import('@/views/article/ArticleTable.vue'),
+            meta: {
+              title: '文章列表',
+              key: '3.1',
+            }
+          }
+        ]
       }
     ]
   },

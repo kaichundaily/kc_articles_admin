@@ -1,7 +1,8 @@
 <script setup>
 import {
   UserOutlined,
-  HomeOutlined
+  HomeOutlined,
+  SnippetsOutlined
 } from "@ant-design/icons-vue";
 import Logo from "@/assets/logo.jpg"
 import { h, ref, watch } from "vue";
@@ -15,7 +16,8 @@ const items = ref([])
 // 图标列表
 const iconMap = ref({
   HomeOutlined,
-  UserOutlined
+  UserOutlined,
+  SnippetsOutlined
 })
 // 获取当前的路由菜单
 const routers = router.options.routes
