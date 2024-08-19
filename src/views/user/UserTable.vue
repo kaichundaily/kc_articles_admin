@@ -2,36 +2,12 @@
 import { ref } from "vue";
 import { getAllUser } from '@/api/user.js'
 import { message } from "ant-design-vue";
+import { userTableColumns } from "@/utils/columns.js";
+import {EditOutlined} from "@ant-design/icons-vue";
 
 
 // table`s header
-const columns = ref([
-  {
-    title: 'ID',
-    dataIndex: 'ID',
-    key: 'ID',
-    align: 'center'
-  },
-  {
-    title: '用户名',
-    dataIndex: '用户名',
-    key: 'username',
-    align: 'center'
-  },
-  {
-    title: '头像',
-    dataIndex: '头像',
-    key: 'avatar',
-    align: 'center'
-  },
-  {
-    title: '编辑',
-    dataIndex: '编辑',
-    key: 'edit',
-    align: 'center',
-    scopedSlots: { customRender: 'action' }  // 绑定插槽
-  }
-])
+const columns = userTableColumns()
 
 
  // 表格数据 和 分页功能
@@ -76,9 +52,9 @@ const drawerSubmit = () => {
 
 <template>
   <div>
-    <div>
-      <a-button type="primary" @click="showDrawer = true">添加用户</a-button>
-    </div>
+<!--    <div>-->
+<!--      <a-button type="primary" @click="showDrawer = true">添加用户</a-button>-->
+<!--    </div>-->
     <a-table
         :columns="columns"
         :data-source="data"
@@ -155,9 +131,25 @@ const drawerSubmit = () => {
         </a-form-item>
       </a-form>
     </a-drawer>
+
+    <a-float-button
+        type="primary"
+        class="custom-float-button"
+        @click="showDrawer = true"
+    >
+      <template #icon>
+        <EditOutlined class="custom-float-button-icon"/>
+      </template>
+    </a-float-button>
   </div>
 </template>
 
 <style scoped>
-
+.custom-float-button {
+  width: 55px;
+  height: 55px;
+  .custom-float-button-icon{
+    font-size: 20px;
+  }
+}
 </style>
