@@ -17,13 +17,10 @@ const userStore = useUserStore()
 const router = useRouter()
 
 const  login = async () => {
-  // console.log(formModel.value.username)
   await form.value.validate()
-  // console.log(formModel.value.username)
   try {
     const res = await userLoginService(formModel.value)
     userStore.setToken(res.data.token)
-    console.log(res.data.token)
     userStore.setUserInfo({
       id: res.data.id,
       username: res.data.username,
