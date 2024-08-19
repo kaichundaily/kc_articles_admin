@@ -19,6 +19,12 @@ export function userTableColumns() {
             align: 'center'
         },
         {
+          title: '状态',
+          dataIndex: '状态',
+          key: 'status',
+          align: "center"
+        },
+        {
             title: '编辑',
             dataIndex: '编辑',
             key: 'edit',
