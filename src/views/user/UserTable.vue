@@ -73,6 +73,9 @@ const changeSubmit = () => {
           <a-avatar v-if="record.avatar" shape="square" :src="record.avatar" />
           <a-avatar v-else shape="square">无</a-avatar>
         </template>
+        <template v-else-if="column.key === 'status'">
+<!--          TODO-->
+        </template>
         <template v-else-if="column.key === 'edit'">
           <a-button type="text" style="color: dodgerblue">编辑</a-button>
           <a-button type="text" style="color: dodgerblue">删除</a-button>
