@@ -20,7 +20,7 @@ onBeforeMount(() => {
 
 const submit = () => {
   message.success("模拟提交成功")
-  emit("closeShowEditArticle")
+  closeEditArticle()
 }
 </script>
 
