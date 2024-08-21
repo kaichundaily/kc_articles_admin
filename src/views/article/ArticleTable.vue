@@ -17,7 +17,7 @@ const data = ref([{
   tag: "测试文章",
   status: true,
   public: false,
-  content: "#测试文章\n##测试第一节\n"
+  content: "# 测试文章\n\n## 测试第一节\n\n"
 }])
 const dataSet = ref({
   nowContent: "",
