@@ -40,7 +40,9 @@ const closeShowEditArticle = () => {
   dataSet.value.showEditArticleDrawer = false
 }
 
-console.log(data.value)
+// onBeforeMount(() => {
+//   childRef.value.toContent()
+// })
 </script>
 
 <template>
@@ -84,6 +86,7 @@ console.log(data.value)
       </template>
     </a-float-button>
     <edit-article
+        ref="childRef"
         :dataSet="dataSet"
         @closeShowEditArticle="closeShowEditArticle"
     />
