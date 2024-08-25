@@ -93,7 +93,9 @@ const customToolbar = ref([
           {{ record.title }}
         </template>
         <template v-else-if="column.key === 'tag'">
-          {{ record.tag }}
+          <a-tag  color="blue">
+            {{ record.tag }}
+          </a-tag>
         </template>
         <template v-else-if="column.key === 'status'">
           <a-switch v-model:checked="record.status">
