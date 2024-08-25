@@ -3,7 +3,7 @@
 </script>
 <template>
   <a-layout-content
-    :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }"
+    :style="{ margin: '24px 16px', padding: '24px', background: '', minHeight: '280px' }"
   >
     <RouterView />
 <!--    <RouterView v-slot="{ Component }">-->
