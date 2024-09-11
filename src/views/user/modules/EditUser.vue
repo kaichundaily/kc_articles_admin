@@ -2,14 +2,25 @@
 import {ref} from "vue";
 import { message } from "ant-design-vue";
 import { UploadImage, DeleImg } from '@/api/file.js'
+import { addUserRules } from '@/utils/rules.js'
 const props = defineProps({
   showDrawer: Boolean
 })
 
+const formRef = ref(null)
 // 1. 图片上传
 const fileList = ref([])
 
-const imgUrl = ref("")
+
+const formData = ref({
+  imgUrl: '',
+  username: '',
+  password: '',
+  confirmPassword: ''
+})
+
+const formRules = addUserRules(formData)
+// const imgUrl = ref("")
 
 const loading = ref(false)
 
@@ -17,17 +28,17 @@ const emit = defineEmits(["changeShowDrawer", "drawerSubmit"])
 const changeShowDrawer = () => {
 
   // 如果退出没有提交则删除上传的图片
-  if (imgUrl.value !== ""){
-    DeleImg(imgUrl.value)
+  if (formData.value.imgUrl !== ""){
+    DeleImg(formData.value.imgUrl)
   }
   // DeleImg(imgUrl)
   fileList.value = []
-  imgUrl.value = ""
+  formData.value.imgUrl = ""
   emit('changeShowDrawer')
 }
 const drawerSubmit = () => {
   fileList.value = []
-  imgUrl.value = ""
+  formData.value.imgUrl = ""
   emit('drawerSubmit')
 }
 
@@ -52,7 +63,7 @@ const handleUpload = async (options) => {
   try {
     const response = await UploadImage(file)
     console.log(response)
-    imgUrl.value = response.data.imgUrl
+    formData.value.imgUrl = response.data.imgUrl
     message.success("图片上传成功")
   } catch (error) {
     message.error("图片上传失败")
@@ -70,7 +81,11 @@ const handleUpload = async (options) => {
       <a-button style="margin-right: 8px" @click="changeShowDrawer">取消</a-button>
       <a-button type="primary" @click="drawerSubmit">提交</a-button>
     </template>
-    <a-form>
+    <a-form
+      :rules="formRules"
+      :model="formData"
+      ref="formRef"
+    >
       <a-form-item>
         <div>头像:</div>
         <a-upload
@@ -82,7 +97,7 @@ const handleUpload = async (options) => {
             :before-upload="beforeUpload"
             :custom-request="handleUpload"
         >
-          <img v-if="imgUrl" :src="imgUrl" alt="avatar" class="uploaded-img" />
+          <img v-if="formData.imgUrl" :src="formData.imgUrl" alt="avatar" class="uploaded-img" />
           <div v-else class="upload-placeholder">
             <loading-outlined v-if="loading"></loading-outlined>
             <plus-outlined v-else></plus-outlined>
@@ -90,25 +105,25 @@ const handleUpload = async (options) => {
           </div>
         </a-upload>
       </a-form-item>
-      <a-form-item>
+      <a-form-item name="username" :rules="formRules.username">
         <div>账户:</div>
-        <a-input placeholder="请输入账户">
+        <a-input v-model="formData.username" placeholder="请输入账户">
           <template #prefix>
             <UserOutlined class="site-form-item-icon" />
           </template>
         </a-input>
       </a-form-item>
-      <a-form-item>
+      <a-form-item name="password" :rules="formRules.password">
         <div>密码:</div>
-        <a-input-password placeholder="请输入密码">
+        <a-input-password v-model="formData.password" placeholder="请输入密码">
           <template #prefix>
             <LockOutlined class="site-form-item-icon" />
           </template>
         </a-input-password>
       </a-form-item>
-      <a-form-item>
+      <a-form-item name="confirmPassword" :rules="formRules.confirmPassword">
         <div>密码验证:</div>
-        <a-input-password placeholder="请再次输入密码">
+        <a-input-password v-model="formData.confirmPassword" placeholder="请再次输入密码">
           <template #prefix>
             <LockOutlined class="site-form-item-icon" />
           </template>
