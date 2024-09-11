@@ -1,13 +1,26 @@
 <script setup>
 import {ref} from "vue";
 import { message } from "ant-design-vue";
-import { UploadImage } from '@/api/file.js'
+import { UploadImage, DeleImg } from '@/api/file.js'
 const props = defineProps({
   showDrawer: Boolean
 })
 
+// 1. 图片上传
+const fileList = ref([])
+
+const imgUrl = ref("")
+
+const loading = ref(false)
+
 const emit = defineEmits(["changeShowDrawer", "drawerSubmit"])
 const changeShowDrawer = () => {
+
+  // 如果退出没有提交则删除上传的图片
+  if (imgUrl.value !== ""){
+    DeleImg(imgUrl.value)
+  }
+  // DeleImg(imgUrl)
   fileList.value = []
   imgUrl.value = ""
   emit('changeShowDrawer')
@@ -17,13 +30,6 @@ const drawerSubmit = () => {
   imgUrl.value = ""
   emit('drawerSubmit')
 }
-
-// 1. 图片上传
-const fileList = ref([])
-
-const imgUrl = ref("")
-
-const loading = ref(false)
 
 // 1.1 上传前处理
 const beforeUpload = (file) => {
