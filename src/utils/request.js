@@ -35,7 +35,7 @@ instance.interceptors.response.use(
     },
     (err) => {
         const userStore = useUserStore()
-        message.error({ message: err.response.data.message || '服务异常', type: 'error' })
+        // message.error({ message: err.data.message || '服务异常', type: 'error' })
         if (err.response?.status === 401) {
             userStore.removeToken()
             userStore.removeUserInfo()
