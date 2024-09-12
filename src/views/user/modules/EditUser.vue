@@ -90,19 +90,15 @@ const handleUpload = async (options) => {
   const { file, onSuccess, onError, onProgress } = options
   console.log(file)
   loading.value = true
-  try {
-    const response = await UploadImage(file)
-    console.log(response)
-    formData.value.imgUrl = response.data.imgUrl
-    message.success("图片上传成功")
-  } catch (error) {
-    message.error("图片上传失败")
-  } finally {
+  await  UploadImage(file).then((result) => {
+    formData.value.imgUrl = result.data.imgUrl
+    message.success(result.message)
+  }).catch((error) => {
+    message.error(error)
+  }).finally(() => {
     loading.value = false
-  }
-
+  })
 }
-
 </script>
 
 <template>
