@@ -28,11 +28,11 @@ const loading = ref(false)
 const emit = defineEmits(["changeShowDrawer", "closeSubmit"])
 
 // 退出创建用户
-const changeShowDrawer = () => {
+const changeShowDrawer = async () => {
 
   // 如果退出没有提交则删除上传的图片
   if (formData.value.imgUrl !== ""){
-    DeleImg(formData.value.imgUrl)
+    await DeleImg(formData.value.imgUrl)
   }
   // DeleImg(imgUrl)
   formData.value = {}
@@ -40,7 +40,7 @@ const changeShowDrawer = () => {
 }
 
 // 提交创建用户
-const drawerSubmit = () => {
+const drawerSubmit = async () => {
   if (formData.value.password === "") {
     console.log(formData.value.password)
     message.error("账号不能为空")
@@ -59,11 +59,11 @@ const drawerSubmit = () => {
     message.error("两次输入的密码不一致")
     return
   }
-  addUser(formData.value.username, formData.value.password, formData.value.imgUrl).then((result) => {
+  await addUser(formData.value.username, formData.value.password, formData.value.imgUrl).then((result) => {
       if (result.code === 200) {
         message.success(result.message)
       } else {
-        message.error(result.message)
+        message.error("创建用户失败")
       }
   }).catch((error) => {
       message.error(error)
@@ -94,7 +94,7 @@ const handleUpload = async (options) => {
     formData.value.imgUrl = result.data.imgUrl
     message.success(result.message)
   }).catch((error) => {
-    message.error(error)
+    message.error(`上传头像失败:${error}`)
   }).finally(() => {
     loading.value = false
   })

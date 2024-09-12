@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { getAllUser } from '@/api/user.js'
+import { getAllUser, deleUser } from '@/api/user.js'
 import { message } from "ant-design-vue";
 import { userTableColumns } from "@/utils/columns.js";
 import { EditOutlined } from "@ant-design/icons-vue";
@@ -45,12 +45,26 @@ getAllUserInfo(1, 10)  // 初始化数据, 默认一页10条
 
 // 添加用户相关逻辑
 const showDrawer = ref(false)
-const changeSubmit = () => {
+const changeSubmit = async () => {
   showDrawer.value = false
-  getAllUserInfo()
+  await getAllUserInfo(1, 10)
 }
 const closeSubmit = () => {
   showDrawer.value = false
+}
+
+
+const deleUserInfo = async (id) => {
+  await deleUser(id).then((reslut) => {
+    if (reslut.code === 200) {
+      message.success(reslut.message)
+    } else {
+      message.error(reslut.message)
+    }
+  }).catch((err) => {
+    message.error(`删除失败: ${err}`)
+  })
+  await getAllUserInfo(1, 10)
 }
 </script>
 
@@ -78,7 +92,7 @@ const closeSubmit = () => {
         </template>
         <template v-else-if="column.key === 'edit'">
           <a-button type="text" style="color: dodgerblue">编辑</a-button>
-          <a-button type="text" style="color: dodgerblue">删除</a-button>
+          <a-button type="text" style="color: dodgerblue" @click="deleUserInfo(record.ID)">删除</a-button>
         </template>
       </template>
     </a-table>
