@@ -2,6 +2,7 @@
 import {ref} from "vue";
 import { message } from "ant-design-vue";
 import { UploadImage, DeleImg } from '@/api/file.js'
+import { addUser } from '@/api/user.js'
 import { addUserRules } from '@/utils/rules.js'
 const props = defineProps({
   showDrawer: Boolean
@@ -19,12 +20,14 @@ const formData = ref({
   confirmPassword: ''
 })
 
-const formRules = addUserRules(formData)
+const formRules = addUserRules()
 // const imgUrl = ref("")
 
 const loading = ref(false)
 
-const emit = defineEmits(["changeShowDrawer", "drawerSubmit"])
+const emit = defineEmits(["changeShowDrawer", "closeSubmit"])
+
+// 退出创建用户
 const changeShowDrawer = () => {
 
   // 如果退出没有提交则删除上传的图片
@@ -32,14 +35,41 @@ const changeShowDrawer = () => {
     DeleImg(formData.value.imgUrl)
   }
   // DeleImg(imgUrl)
-  fileList.value = []
-  formData.value.imgUrl = ""
-  emit('changeShowDrawer')
+  formData.value = {}
+  emit('closeSubmit')
 }
+
+// 提交创建用户
 const drawerSubmit = () => {
-  fileList.value = []
-  formData.value.imgUrl = ""
-  emit('drawerSubmit')
+  if (formData.value.password === "") {
+    console.log(formData.value.password)
+    message.error("账号不能为空")
+    return
+  }
+  if (formData.value.password === "")  {
+    message.error("密码不能为空")
+    return
+  }
+  if (formData.value.confirmPassword === "")  {
+    message.error("验证密码不能为空")
+    return
+  }
+
+  if (formData.value.password !== formData.value.confirmPassword) {
+    message.error("两次输入的密码不一致")
+    return
+  }
+  addUser(formData.value.username, formData.value.password, formData.value.imgUrl).then((result) => {
+      if (result.code === 200) {
+        message.success(result.message)
+      } else {
+        message.error(result.message)
+      }
+  }).catch((error) => {
+      message.error(error)
+  })
+  formData.value = {}
+  emit('changeShowDrawer')
 }
 
 // 1.1 上传前处理
@@ -107,7 +137,7 @@ const handleUpload = async (options) => {
       </a-form-item>
       <a-form-item name="username" :rules="formRules.username">
         <div>账户:</div>
-        <a-input v-model="formData.username" placeholder="请输入账户">
+        <a-input v-model:value="formData.username" placeholder="请输入账户">
           <template #prefix>
             <UserOutlined class="site-form-item-icon" />
           </template>
@@ -115,7 +145,7 @@ const handleUpload = async (options) => {
       </a-form-item>
       <a-form-item name="password" :rules="formRules.password">
         <div>密码:</div>
-        <a-input-password v-model="formData.password" placeholder="请输入密码">
+        <a-input-password v-model:value="formData.password" placeholder="请输入密码">
           <template #prefix>
             <LockOutlined class="site-form-item-icon" />
           </template>
@@ -123,7 +153,7 @@ const handleUpload = async (options) => {
       </a-form-item>
       <a-form-item name="confirmPassword" :rules="formRules.confirmPassword">
         <div>密码验证:</div>
-        <a-input-password v-model="formData.confirmPassword" placeholder="请再次输入密码">
+        <a-input-password v-model:value="formData.confirmPassword" placeholder="请再次输入密码">
           <template #prefix>
             <LockOutlined class="site-form-item-icon" />
           </template>

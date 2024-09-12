@@ -45,11 +45,11 @@ getAllUserInfo(1, 10)  // 初始化数据, 默认一页10条
 
 // 添加用户相关逻辑
 const showDrawer = ref(false)
-const drawerSubmit = () => {
-  console.log("已提交")
-  showDrawer.value = false
-}
 const changeSubmit = () => {
+  showDrawer.value = false
+  getAllUserInfo()
+}
+const closeSubmit = () => {
   showDrawer.value = false
 }
 </script>
@@ -86,7 +86,7 @@ const changeSubmit = () => {
     <edit-user
         :showDrawer="showDrawer"
         @changeShowDrawer="changeSubmit"
-        @drawerSubmit="drawerSubmit"
+        @closeSubmit="closeSubmit"
     />
     <!--  右下角按钮  -->
     <a-float-button

@@ -15,3 +15,11 @@ export const getAllUser = async (page, size) =>  {
         }
     })
 }
+
+export const addUser = async (username, password, imgUrl) => {
+    return await request.postForm('/api/createUser', {
+        username,
+        password,
+        avatar: imgUrl
+    })
+}
