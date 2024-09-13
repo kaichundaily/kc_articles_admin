@@ -51,38 +51,41 @@ const changeShowDrawer = async () => {
 // 提交创建用户
 const drawerSubmit = async () => {
   // 根据传进来的模式判断操作逻辑
-  if (props.mode === "add") {
-    if (formData.value.password === "") {
-      console.log(formData.value.password)
-      message.error("账号不能为空")
-      return
-    }
-    if (formData.value.password === "")  {
-      message.error("密码不能为空")
-      return
-    }
-    if (formData.value.confirmPassword === "")  {
-      message.error("验证密码不能为空")
-      return
-    }
-
-    if (formData.value.password !== formData.value.confirmPassword) {
-      message.error("两次输入的密码不一致")
-      return
-    }
-    await addUser(formData.value.username, formData.value.password, formData.value.imgUrl).then((result) => {
-      if (result.code === 200) {
-        message.success(result.message)
-      } else {
-        message.error("创建用户失败或用户已存在")
+  switch (props.mode) {
+    case "add":
+      if (formData.value.password === "") {
+        console.log(formData.value.password)
+        message.error("账号不能为空")
+        return
       }
-    }).catch((error) => {
-      message.error(`创建用户失败:${error}`)
-    })
-    formData.value = {}
-    emit('changeShowDrawer')
-  } else {
-    // TODO 修改用户信息
+      if (formData.value.password === "")  {
+        message.error("密码不能为空")
+        return
+      }
+      if (formData.value.confirmPassword === "")  {
+        message.error("验证密码不能为空")
+        return
+      }
+
+      if (formData.value.password !== formData.value.confirmPassword) {
+        message.error("两次输入的密码不一致")
+        return
+      }
+      await addUser(formData.value.username, formData.value.password, formData.value.imgUrl).then((result) => {
+        if (result.code === 200) {
+          message.success(result.message)
+        } else {
+          message.error("创建用户失败或用户已存在")
+        }
+      }).catch((error) => {
+        message.error(`创建用户失败:${error}`)
+      })
+      formData.value = {}
+      emit('changeShowDrawer');
+      break
+    case "edit":
+      console.log("TODO 修改用户信息")
+      break
   }
 }
 
