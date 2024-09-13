@@ -5,7 +5,8 @@ import { UploadImage, DeleImg } from '@/api/file.js'
 import { addUser } from '@/api/user.js'
 import { addUserRules } from '@/utils/rules.js'
 const props = defineProps({
-  showDrawer: Boolean
+  showDrawer: Boolean,
+  mode: String
 })
 
 const formRef = ref(null)
@@ -63,10 +64,10 @@ const drawerSubmit = async () => {
       if (result.code === 200) {
         message.success(result.message)
       } else {
-        message.error("创建用户失败")
+        message.error("创建用户失败或用户已存在")
       }
   }).catch((error) => {
-      message.error(error)
+      message.error(`创建用户失败:${error}`)
   })
   formData.value = {}
   emit('changeShowDrawer')

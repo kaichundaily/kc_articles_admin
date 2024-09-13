@@ -4,7 +4,7 @@ import { getAllUser, deleUser } from '@/api/user.js'
 import { message } from "ant-design-vue";
 import { userTableColumns } from "@/utils/columns.js";
 import { EditOutlined } from "@ant-design/icons-vue";
-import EditUser from "@/views/user/modules/EditUser.vue";
+import EditUser from "@/views/user/modules/AddUser.vue";
 
 
 // table`s header
