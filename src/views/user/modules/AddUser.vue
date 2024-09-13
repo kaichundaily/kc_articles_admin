@@ -21,6 +21,14 @@ const formData = ref({
   confirmPassword: ''
 })
 
+
+const oldFormData = ref({
+  imgUrl: '',
+  username: '',
+  password: '',
+  confirmPassword: ''
+})
+
 const formRules = addUserRules()
 // const imgUrl = ref("")
 
@@ -42,35 +50,40 @@ const changeShowDrawer = async () => {
 
 // 提交创建用户
 const drawerSubmit = async () => {
-  if (formData.value.password === "") {
-    console.log(formData.value.password)
-    message.error("账号不能为空")
-    return
-  }
-  if (formData.value.password === "")  {
-    message.error("密码不能为空")
-    return
-  }
-  if (formData.value.confirmPassword === "")  {
-    message.error("验证密码不能为空")
-    return
-  }
+  // 根据传进来的模式判断操作逻辑
+  if (props.mode === "add") {
+    if (formData.value.password === "") {
+      console.log(formData.value.password)
+      message.error("账号不能为空")
+      return
+    }
+    if (formData.value.password === "")  {
+      message.error("密码不能为空")
+      return
+    }
+    if (formData.value.confirmPassword === "")  {
+      message.error("验证密码不能为空")
+      return
+    }
 
-  if (formData.value.password !== formData.value.confirmPassword) {
-    message.error("两次输入的密码不一致")
-    return
-  }
-  await addUser(formData.value.username, formData.value.password, formData.value.imgUrl).then((result) => {
+    if (formData.value.password !== formData.value.confirmPassword) {
+      message.error("两次输入的密码不一致")
+      return
+    }
+    await addUser(formData.value.username, formData.value.password, formData.value.imgUrl).then((result) => {
       if (result.code === 200) {
         message.success(result.message)
       } else {
         message.error("创建用户失败或用户已存在")
       }
-  }).catch((error) => {
+    }).catch((error) => {
       message.error(`创建用户失败:${error}`)
-  })
-  formData.value = {}
-  emit('changeShowDrawer')
+    })
+    formData.value = {}
+    emit('changeShowDrawer')
+  } else {
+    // TODO 修改用户信息
+  }
 }
 
 // 1.1 上传前处理
@@ -134,11 +147,12 @@ const handleUpload = async (options) => {
       </a-form-item>
       <a-form-item name="username" :rules="formRules.username">
         <div>账户:</div>
-        <a-input v-model:value="formData.username" placeholder="请输入账户">
+        <a-input v-if="mode === 'edit'" v-model:value="formData.username" placeholder="请输入账户">
           <template #prefix>
             <UserOutlined class="site-form-item-icon" />
           </template>
         </a-input>
+        <div v-else>UserName: </div>
       </a-form-item>
       <a-form-item name="password" :rules="formRules.password">
         <div>密码:</div>

@@ -10,7 +10,6 @@ import EditUser from "@/views/user/modules/AddUser.vue";
 // table`s header
 const columns = userTableColumns()
 
-
  // 表格数据 和 分页功能
 const pagination = ref({
   current: 1,
@@ -41,16 +40,26 @@ const getAllUserInfo = async (page, size) => {
   pagination.value.total = res.data.total
   loading.value = false
 }
-getAllUserInfo(1, 10)  // 初始化数据, 默认一页10条
 
 // 添加用户相关逻辑
+// 调用抽屉的模式
+const mode = ref("")
 const showDrawer = ref(false)
+// 设置在打开抽屉时的模式,编辑模式,添加模式
+const openDrawer = (value) => {
+  showDrawer.value = true
+  mode.value = value
+}
+// 添加用户后再次调用获取用户列表
 const changeSubmit = async () => {
   showDrawer.value = false
+  mode.value = ""
   await getAllUserInfo(1, 10)
 }
+// 取消添加用户
 const closeSubmit = () => {
   showDrawer.value = false
+  mode.value = ""
 }
 
 
@@ -66,6 +75,9 @@ const deleUserInfo = async (id) => {
   })
   await getAllUserInfo(1, 10)
 }
+
+// 数据初始化
+getAllUserInfo(1, 10)
 </script>
 
 <template>
@@ -91,7 +103,7 @@ const deleUserInfo = async (id) => {
 <!--          TODO-->
         </template>
         <template v-else-if="column.key === 'edit'">
-          <a-button type="text" style="color: dodgerblue">编辑</a-button>
+          <a-button type="text" style="color: dodgerblue" @click="openDrawer('edit')">编辑</a-button>
           <a-button type="text" style="color: dodgerblue" @click="deleUserInfo(record.ID)">删除</a-button>
         </template>
       </template>
@@ -99,6 +111,7 @@ const deleUserInfo = async (id) => {
     <!--  添加用户抽屉  -->
     <edit-user
         :showDrawer="showDrawer"
+        :mode="mode"
         @changeShowDrawer="changeSubmit"
         @closeSubmit="closeSubmit"
     />
@@ -106,7 +119,7 @@ const deleUserInfo = async (id) => {
     <a-float-button
         type="primary"
         class="custom-float-button"
-        @click="showDrawer = true"
+        @click="openDrawer('add')"
     >
       <template #icon>
         <EditOutlined class="custom-float-button-icon"/>
