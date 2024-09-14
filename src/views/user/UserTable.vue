@@ -50,12 +50,12 @@ const getAllUserInfo = async (page, size) => {
 const showDrawer = ref(false)
 // 设置在打开抽屉时的模式,编辑模式,添加模式
 const mode = ref("")
-const record = ref({})
-const openDrawer = (value,userinfo) => {
+const olduserinfo = ref({})
+const openDrawer = (value,record) => {
   mode.value = value
-  console.log(typeof userinfo)
+  // console.log(typeof record)
   if (value === "edit") {
-    record.value = userinfo
+    olduserinfo.value = record
   }
   showDrawer.value = true
 }
@@ -67,6 +67,11 @@ const changeSubmit = async () => {
 }
 // 取消添加用户
 const closeSubmit = () => {
+  olduserinfo.value = {
+    avatar: '',
+    username: '',
+    ID: '',
+  }
   showDrawer.value = false
 }
 
@@ -128,19 +133,25 @@ getAllUserInfo(1, 10)
         </template>
       </template>
     </a-table>
-    <!--  添加用户抽屉  -->
-    <edit-user
-        :showDrawer="showDrawer"
-        :mode="mode"
-        :record="record"
-        @changeShowDrawer="changeSubmit"
-        @closeSubmit="closeSubmit"
-    />
+    <!-- TODO:还是有BUG,退出动画没了 添加/修改用户抽屉  -->
+    <div v-if="showDrawer">
+      <edit-user
+          :showDrawer="showDrawer"
+          :mode="mode"
+          :record="olduserinfo"
+          @changeShowDrawer="changeSubmit"
+          @closeSubmit="closeSubmit"
+      />
+    </div>
     <!--  右下角按钮  -->
     <a-float-button
         type="primary"
         class="custom-float-button"
-        @click="openDrawer('add',{})"
+        @click="openDrawer('add',{
+          avatar: '',
+          username: '',
+          ID: '',
+        })"
     >
       <template #icon>
         <EditOutlined class="custom-float-button-icon"/>

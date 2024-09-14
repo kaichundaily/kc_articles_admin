@@ -121,7 +121,7 @@ const handleUpload = async (options) => {
 
 // 2. 修改用户信息
 const initEditUserInfo = () => {
-  console.log(props.record)
+  console.log(props.record.avatar)
   switch (props.mode) {
     case "edit":
       formData.value.imgUrl = props.record.avatar
