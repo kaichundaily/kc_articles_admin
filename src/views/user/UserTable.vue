@@ -49,8 +49,14 @@ const getAllUserInfo = async (page, size) => {
 // 调用抽屉的模式
 const showDrawer = ref(false)
 // 设置在打开抽屉时的模式,编辑模式,添加模式
-const openDrawer = (record) => {
-  console.log(record.ID)
+const mode = ref("")
+const record = ref({})
+const openDrawer = (value,userinfo) => {
+  mode.value = value
+  console.log(typeof userinfo)
+  if (value === "edit") {
+    record.value = userinfo
+  }
   showDrawer.value = true
 }
 
@@ -117,7 +123,7 @@ getAllUserInfo(1, 10)
 <!--          TODO-->
         </template>
         <template v-else-if="column.key === 'edit'">
-          <a-button type="text" style="color: dodgerblue" @click="openDrawer(record)">编辑</a-button>
+          <a-button type="text" style="color: dodgerblue" @click="openDrawer('edit',record)">编辑</a-button>
           <a-button v-if="record.username !== 'admin'" type="text" style="color: dodgerblue" @click="delUser(record.ID)">删除</a-button>
         </template>
       </template>
@@ -125,6 +131,8 @@ getAllUserInfo(1, 10)
     <!--  添加用户抽屉  -->
     <edit-user
         :showDrawer="showDrawer"
+        :mode="mode"
+        :record="record"
         @changeShowDrawer="changeSubmit"
         @closeSubmit="closeSubmit"
     />
@@ -132,7 +140,7 @@ getAllUserInfo(1, 10)
     <a-float-button
         type="primary"
         class="custom-float-button"
-        @click="openDrawer({})"
+        @click="openDrawer('add',{})"
     >
       <template #icon>
         <EditOutlined class="custom-float-button-icon"/>

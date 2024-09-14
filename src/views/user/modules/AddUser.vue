@@ -5,7 +5,9 @@ import { UploadImage, DeleImg } from '@/api/file.js'
 import { addUser } from '@/api/user.js'
 import { addUserRules } from '@/utils/rules.js'
 const props = defineProps({
-  showDrawer: Boolean
+  showDrawer: Boolean,
+  mode: String,
+  record: Object
 })
 
 const formRef = ref(null)
@@ -31,9 +33,15 @@ const emit = defineEmits(["changeShowDrawer", "closeSubmit"])
 const changeShowDrawer = async () => {
   // console.log(formData.value.imgUrl)
   // 如果退出没有提交则删除上传的图片
-  if (formData.value.imgUrl !== ''){
-    console.log(formData.value.imgUrl)
-    await DeleImg(formData.value.imgUrl)
+  switch (props.mode) {
+    case "edit":
+      break
+    case "add":
+      if (formData.value.imgUrl !== ''){
+        console.log(formData.value.imgUrl)
+        await DeleImg(formData.value.imgUrl)
+      }
+      break
   }
   // DeleImg(imgUrl)
   formData.value = {
@@ -111,6 +119,19 @@ const handleUpload = async (options) => {
   })
 }
 
+// 2. 修改用户信息
+const initEditUserInfo = () => {
+  console.log(props.record)
+  switch (props.mode) {
+    case "edit":
+      formData.value.imgUrl = props.record.avatar
+      break
+    case "add":
+      break
+  }
+}
+// 初始化数据
+initEditUserInfo()
 </script>
 
 <template>
@@ -144,6 +165,7 @@ const handleUpload = async (options) => {
         </a-upload>
       </a-form-item>
       <a-form-item name="username" :rules="formRules.username">
+        <div>账户:</div>
         <a-input v-model:value="formData.username" placeholder="请输入账户">
           <template #prefix>
             <UserOutlined class="site-form-item-icon" />
