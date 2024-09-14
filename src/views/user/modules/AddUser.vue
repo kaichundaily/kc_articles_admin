@@ -5,8 +5,7 @@ import { UploadImage, DeleImg } from '@/api/file.js'
 import { addUser } from '@/api/user.js'
 import { addUserRules } from '@/utils/rules.js'
 const props = defineProps({
-  showDrawer: Boolean,
-  mode: String
+  showDrawer: Boolean
 })
 
 const formRef = ref(null)
@@ -15,14 +14,6 @@ const fileList = ref([])
 
 
 const formData = ref({
-  imgUrl: '',
-  username: '',
-  password: '',
-  confirmPassword: ''
-})
-
-
-const oldFormData = ref({
   imgUrl: '',
   username: '',
   password: '',
@@ -38,9 +29,10 @@ const emit = defineEmits(["changeShowDrawer", "closeSubmit"])
 
 // 退出创建用户
 const changeShowDrawer = async () => {
-
+  // console.log(formData.value.imgUrl)
   // 如果退出没有提交则删除上传的图片
-  if (formData.value.imgUrl !== ""){
+  if (formData.value.imgUrl !== ''){
+    console.log(formData.value.imgUrl)
     await DeleImg(formData.value.imgUrl)
   }
   // DeleImg(imgUrl)
@@ -50,43 +42,35 @@ const changeShowDrawer = async () => {
 
 // 提交创建用户
 const drawerSubmit = async () => {
-  // 根据传进来的模式判断操作逻辑
-  switch (props.mode) {
-    case "add":
-      if (formData.value.password === "") {
-        console.log(formData.value.password)
-        message.error("账号不能为空")
-        return
-      }
-      if (formData.value.password === "")  {
-        message.error("密码不能为空")
-        return
-      }
-      if (formData.value.confirmPassword === "")  {
-        message.error("验证密码不能为空")
-        return
-      }
-
-      if (formData.value.password !== formData.value.confirmPassword) {
-        message.error("两次输入的密码不一致")
-        return
-      }
-      await addUser(formData.value.username, formData.value.password, formData.value.imgUrl).then((result) => {
-        if (result.code === 200) {
-          message.success(result.message)
-        } else {
-          message.error("创建用户失败或用户已存在")
-        }
-      }).catch((error) => {
-        message.error(`创建用户失败:${error}`)
-      })
-      formData.value = {}
-      emit('changeShowDrawer');
-      break
-    case "edit":
-      console.log("TODO 修改用户信息")
-      break
+  if (formData.value.password === "") {
+    message.error("账号不能为空")
+    return
   }
+  if (formData.value.password === "")  {
+    message.error("密码不能为空")
+    return
+  }
+  if (formData.value.confirmPassword === "")  {
+    message.error("验证密码不能为空")
+    return
+  }
+
+  if (formData.value.password !== formData.value.confirmPassword) {
+    message.error("两次输入的密码不一致")
+    return
+  }
+  await addUser(formData.value.username, formData.value.password, formData.value.imgUrl).then((result) => {
+    if (result.code === 200) {
+      message.success(result.message)
+    } else {
+      message.error("创建用户失败或用户已存在")
+    }
+  }).catch((error) => {
+    message.error(`创建用户失败:${error}`)
+  }).finally(() => {
+    formData.value = {}
+    emit('changeShowDrawer')
+  })
 }
 
 // 1.1 上传前处理
@@ -116,6 +100,7 @@ const handleUpload = async (options) => {
     loading.value = false
   })
 }
+
 </script>
 
 <template>
@@ -149,13 +134,11 @@ const handleUpload = async (options) => {
         </a-upload>
       </a-form-item>
       <a-form-item name="username" :rules="formRules.username">
-        <div>账户:</div>
-        <a-input v-if="mode === 'edit'" v-model:value="formData.username" placeholder="请输入账户">
+        <a-input v-model:value="formData.username" placeholder="请输入账户">
           <template #prefix>
             <UserOutlined class="site-form-item-icon" />
           </template>
         </a-input>
-        <div v-else>UserName: </div>
       </a-form-item>
       <a-form-item name="password" :rules="formRules.password">
         <div>密码:</div>

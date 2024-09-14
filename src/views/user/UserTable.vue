@@ -27,44 +27,57 @@ const data = ref([])
 const loading = ref(false)
 const getAllUserInfo = async (page, size) => {
   loading.value = true
-  let res = null
-  try {
-    res = await getAllUser(page, size)
-  } catch (err) {
-    message.error("查询失败")
+  // let res = null
+  // try {
+  //   res = await getAllUser(page, size)
+  // } catch (err) {
+  //   message.error("查询失败")
+  //   loading.value = false
+  //   return
+  // }
+  await getAllUser(page, size).then((result) => {
+    data.value = result.data.data
+    pagination.value.total = result.data.total
+  }).catch((error) => {
+    message.error(`查询失败:${error}`)
+  }).finally(() => {
     loading.value = false
-    return
-  }
-  // const res = await getAllUser(page, size)
-  data.value = res.data.data
-  pagination.value.total = res.data.total
-  loading.value = false
+  })
 }
 
 // 添加用户相关逻辑
 // 调用抽屉的模式
-const mode = ref("")
 const showDrawer = ref(false)
 // 设置在打开抽屉时的模式,编辑模式,添加模式
-const openDrawer = (value) => {
+const openDrawer = (record) => {
+  console.log(record.ID)
   showDrawer.value = true
-  mode.value = value
 }
+
 // 添加用户后再次调用获取用户列表
 const changeSubmit = async () => {
   showDrawer.value = false
-  mode.value = ""
   await getAllUserInfo(1, 10)
 }
 // 取消添加用户
 const closeSubmit = () => {
   showDrawer.value = false
-  mode.value = ""
 }
 
+// 2. 删除时弹出确认框
+const delShow = ref(false)
+const delID = ref("")
+const delUser = (id) => {
+  delID.value = id
+  delShow.value = true
+}
+const cloesDelUser = () => {
+  delID.value = ""
+  delShow.value = false
+}
 
-const deleUserInfo = async (id) => {
-  await deleUser(id).then((reslut) => {
+const deleUserInfo = async () => {
+  await deleUser(delID.value).then((reslut) => {
     if (reslut.code === 200) {
       message.success(reslut.message)
     } else {
@@ -72,10 +85,11 @@ const deleUserInfo = async (id) => {
     }
   }).catch((err) => {
     message.error(`删除失败: ${err}`)
+  }).finally(() => {
+    delShow.value = false
+    getAllUserInfo(1, 10)
   })
-  await getAllUserInfo(1, 10)
 }
-
 // 数据初始化
 getAllUserInfo(1, 10)
 </script>
@@ -103,15 +117,14 @@ getAllUserInfo(1, 10)
 <!--          TODO-->
         </template>
         <template v-else-if="column.key === 'edit'">
-          <a-button type="text" style="color: dodgerblue" @click="openDrawer('edit')">编辑</a-button>
-          <a-button type="text" style="color: dodgerblue" @click="deleUserInfo(record.ID)">删除</a-button>
+          <a-button type="text" style="color: dodgerblue" @click="openDrawer(record)">编辑</a-button>
+          <a-button v-if="record.username !== 'admin'" type="text" style="color: dodgerblue" @click="delUser(record.ID)">删除</a-button>
         </template>
       </template>
     </a-table>
     <!--  添加用户抽屉  -->
     <edit-user
         :showDrawer="showDrawer"
-        :mode="mode"
         @changeShowDrawer="changeSubmit"
         @closeSubmit="closeSubmit"
     />
@@ -119,13 +132,25 @@ getAllUserInfo(1, 10)
     <a-float-button
         type="primary"
         class="custom-float-button"
-        @click="openDrawer('add')"
+        @click="openDrawer({})"
     >
       <template #icon>
         <EditOutlined class="custom-float-button-icon"/>
       </template>
     </a-float-button>
   </div>
+
+<!--  删除用户确认框 -->
+  <a-modal
+    :open="delShow"
+    title="确认要删除吗"
+    cancel-text="取消"
+    ok-text="确认"
+    @cancel="cloesDelUser"
+    @ok="deleUserInfo"
+  >
+    <p>不再考虑一下？</p>
+  </a-modal>
 </template>
 
 <style scoped>
