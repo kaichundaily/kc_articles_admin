@@ -36,7 +36,12 @@ const changeShowDrawer = async () => {
     await DeleImg(formData.value.imgUrl)
   }
   // DeleImg(imgUrl)
-  formData.value = {}
+  formData.value = {
+    imgUrl: '',
+    username: '',
+    password: '',
+    confirmPassword: ''
+  }
   emit('closeSubmit')
 }
 
@@ -68,7 +73,12 @@ const drawerSubmit = async () => {
   }).catch((error) => {
     message.error(`创建用户失败:${error}`)
   }).finally(() => {
-    formData.value = {}
+    formData.value = {
+      imgUrl: '',
+      username: '',
+      password: '',
+      confirmPassword: ''
+    }
     emit('changeShowDrawer')
   })
 }
