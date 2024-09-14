@@ -28,7 +28,6 @@ instance.interceptors.response.use(
     (res) => {
         // console.log(res)
         if (res.data.code === 200) {
-            console.log(res)
             return res.data
         }
         // message.error({ message: res.data.message || '服务异常', type: 'error' })

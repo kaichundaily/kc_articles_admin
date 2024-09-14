@@ -54,7 +54,7 @@ const olduserinfo = ref({})
 const openDrawer = (value,record) => {
   mode.value = value
   // console.log(typeof record)
-  if (value === "edit") {
+  if (mode.value === "edit") {
     olduserinfo.value = record
   }
   showDrawer.value = true
@@ -72,6 +72,7 @@ const closeSubmit = () => {
     username: '',
     ID: '',
   }
+  mode.value = ''
   showDrawer.value = false
 }
 
@@ -133,16 +134,14 @@ getAllUserInfo(1, 10)
         </template>
       </template>
     </a-table>
-    <!-- TODO:还是有BUG,退出动画没了 添加/修改用户抽屉  -->
-    <div v-if="showDrawer">
-      <edit-user
-          :showDrawer="showDrawer"
-          :mode="mode"
-          :record="olduserinfo"
-          @changeShowDrawer="changeSubmit"
-          @closeSubmit="closeSubmit"
-      />
-    </div>
+
+    <edit-user
+        :showDrawer="showDrawer"
+        :mode="mode"
+        :record="olduserinfo"
+        @changeShowDrawer="changeSubmit"
+        @closeSubmit="closeSubmit"
+    />
     <!--  右下角按钮  -->
     <a-float-button
         type="primary"

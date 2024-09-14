@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import { message } from "ant-design-vue";
 import { UploadImage, DeleImg } from '@/api/file.js'
 import { addUser } from '@/api/user.js'
@@ -23,7 +23,6 @@ const formData = ref({
 })
 
 const formRules = addUserRules()
-// const imgUrl = ref("")
 
 const loading = ref(false)
 
@@ -38,7 +37,6 @@ const changeShowDrawer = async () => {
       break
     case "add":
       if (formData.value.imgUrl !== ''){
-        console.log(formData.value.imgUrl)
         await DeleImg(formData.value.imgUrl)
       }
       break
@@ -95,7 +93,6 @@ const drawerSubmit = async () => {
 const beforeUpload = (file) => {
   const isImage = file.type.startsWith('image/')
   const isLt2m = file.size / 1024 / 1024 < 2
-  console.log(file.size)
   if (!isImage) {
     message.error("上传的必须是图片")
   }
@@ -107,7 +104,6 @@ const beforeUpload = (file) => {
 // 1.2 上传
 const handleUpload = async (options) => {
   const { file, onSuccess, onError, onProgress } = options
-  console.log(file)
   loading.value = true
   await  UploadImage(file).then((result) => {
     formData.value.imgUrl = result.data.imgUrl
@@ -121,7 +117,6 @@ const handleUpload = async (options) => {
 
 // 2. 修改用户信息
 const initEditUserInfo = () => {
-  console.log(props.record.avatar)
   switch (props.mode) {
     case "edit":
       formData.value.imgUrl = props.record.avatar
@@ -130,8 +125,10 @@ const initEditUserInfo = () => {
       break
   }
 }
-// 初始化数据
-initEditUserInfo()
+// 监听props的变化，以便初始化数据
+watch(props,(newValue,oldValue) => {
+  initEditUserInfo()
+})
 </script>
 
 <template>
