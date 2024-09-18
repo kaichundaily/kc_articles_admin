@@ -29,3 +29,11 @@ export const deleUser = async (id) => {
         id
     })
 }
+// 修改账户信息
+export const updateUser = async (ID, newImgUrl, newPassword) => {
+    return await request.postForm("/api/updateUserInfo", {
+        ID,
+        imgUrl: newImgUrl,
+        password: newPassword
+    })
+}

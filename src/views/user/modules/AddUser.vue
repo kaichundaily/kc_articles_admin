@@ -1,8 +1,8 @@
 <script setup>
-import {ref, watch} from "vue";
+import { ref, watch } from "vue";
 import { message } from "ant-design-vue";
 import { UploadImage, DeleImg } from '@/api/file.js'
-import { addUser } from '@/api/user.js'
+import { addUser,updateUser } from '@/api/user.js'
 import { addUserRules } from '@/utils/rules.js'
 const props = defineProps({
   showDrawer: Boolean,
@@ -34,6 +34,9 @@ const changeShowDrawer = async () => {
   // 如果退出没有提交则删除上传的图片
   switch (props.mode) {
     case "edit":
+      if (oldImgUrl.value !== "") {
+        await DeleImg(formData.value.imgUrl)
+      }
       break
     case "add":
       if (formData.value.imgUrl !== ''){
@@ -53,40 +56,79 @@ const changeShowDrawer = async () => {
 
 // 提交创建用户
 const drawerSubmit = async () => {
-  if (formData.value.password === "") {
-    message.error("账号不能为空")
-    return
-  }
-  if (formData.value.password === "")  {
-    message.error("密码不能为空")
-    return
-  }
-  if (formData.value.confirmPassword === "")  {
-    message.error("验证密码不能为空")
-    return
-  }
+  switch (props.mode){
+    // 修改用户信息
+    case 'edit':
+      if (oldImgUrl.value === "" && formData.value.password === "") {
+        message.warning("至少修改头像或者密码其中一项才能提交")
+        oldImgUrl.value = ""
+        formData.value = {
+          imgUrl: '',
+          username: '',
+          password: '',
+          confirmPassword: ''
+        }
+        emit('changeShowDrawer')
+        break
+      }
+      await updateUser(props.record.ID,formData.value.imgUrl, formData.value.password).then((result) => {
+        if (result.code === 200) {
+          message.success("用户信息修改成功")
+        } else {
+          message.error("用户信息修改失败:S")
+        }
+      }).catch(() => {
+        message.error("用户信息修改失败:C")
+      }).finally(() => {
+        oldImgUrl.value = ""
+        formData.value = {
+          imgUrl: '',
+          username: '',
+          password: '',
+          confirmPassword: ''
+        }
+        emit('changeShowDrawer')
+      })
+      break
+    // 添加新的用户
+    case 'add':
+      if (formData.value.password === "") {
+        message.error("账号不能为空")
+        return
+      }
+      if (formData.value.password === "")  {
+        message.error("密码不能为空")
+        return
+      }
+      if (formData.value.confirmPassword === "")  {
+        message.error("验证密码不能为空")
+        return
+      }
 
-  if (formData.value.password !== formData.value.confirmPassword) {
-    message.error("两次输入的密码不一致")
-    return
+      if (formData.value.password !== formData.value.confirmPassword) {
+        message.error("两次输入的密码不一致")
+        return
+      }
+      await addUser(formData.value.username, formData.value.password, formData.value.imgUrl).then((result) => {
+        if (result.code === 200) {
+          message.success(result.message)
+        } else {
+          message.error("创建用户失败或用户已存在")
+        }
+      }).catch((error) => {
+        message.error(`创建用户失败:${error}`)
+      }).finally(() => {
+        oldImgUrl.value = ""
+        formData.value = {
+          imgUrl: '',
+          username: '',
+          password: '',
+          confirmPassword: ''
+        }
+        emit('changeShowDrawer')
+      })
+      break
   }
-  await addUser(formData.value.username, formData.value.password, formData.value.imgUrl).then((result) => {
-    if (result.code === 200) {
-      message.success(result.message)
-    } else {
-      message.error("创建用户失败或用户已存在")
-    }
-  }).catch((error) => {
-    message.error(`创建用户失败:${error}`)
-  }).finally(() => {
-    formData.value = {
-      imgUrl: '',
-      username: '',
-      password: '',
-      confirmPassword: ''
-    }
-    emit('changeShowDrawer')
-  })
 }
 
 // 1.1 上传前处理
@@ -101,8 +143,13 @@ const beforeUpload = (file) => {
   }
   return isImage && isLt2m
 }
+
+const oldImgUrl = ref("")
 // 1.2 上传
 const handleUpload = async (options) => {
+  if (formData.value.imgUrl !== "") {
+    oldImgUrl.value = formData.value.imgUrl
+  }
   const { file, onSuccess, onError, onProgress } = options
   loading.value = true
   await  UploadImage(file).then((result) => {
@@ -120,6 +167,7 @@ const initEditUserInfo = () => {
   switch (props.mode) {
     case "edit":
       formData.value.imgUrl = props.record.avatar
+      formData.value.username = props.record.username
       break
     case "add":
       break
@@ -143,7 +191,8 @@ watch(props,(newValue,oldValue) => {
       ref="formRef"
     >
       <a-form-item>
-        <div>头像:</div>
+        <div v-if="mode === 'edit'">修改头像:</div>
+        <div v-else>上传头像:</div>
         <a-upload
             v-model:file-list="fileList"
             name="file"
@@ -162,15 +211,23 @@ watch(props,(newValue,oldValue) => {
         </a-upload>
       </a-form-item>
       <a-form-item name="username" :rules="formRules.username">
-        <div>账户:</div>
-        <a-input v-model:value="formData.username" placeholder="请输入账户">
+        <div v-if="mode === 'edit'">账户名称:</div>
+        <div v-else>创建账户:</div>
+        <!--    如果是编辑模式,则用户名不能修改    -->
+        <a-input v-if="mode === 'edit'" v-model:value="formData.username" readOnly>
+          <template #prefix>
+            <UserOutlined class="site-form-item-icon" />
+          </template>
+        </a-input>
+        <a-input v-else v-model:value="formData.username" placeholder="请输入账户">
           <template #prefix>
             <UserOutlined class="site-form-item-icon" />
           </template>
         </a-input>
       </a-form-item>
       <a-form-item name="password" :rules="formRules.password">
-        <div>密码:</div>
+        <div v-if="mode === 'edit'">修改密码:</div>
+        <div v-else>创建密码:</div>
         <a-input-password v-model:value="formData.password" placeholder="请输入密码">
           <template #prefix>
             <LockOutlined class="site-form-item-icon" />
