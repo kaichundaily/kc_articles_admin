@@ -13,7 +13,7 @@ export function loginFormRules() {
 
 
 export function addUserRules() {
-    return{
+    return {
         username: [
             {
                 required: true,
@@ -41,6 +41,48 @@ export function addUserRules() {
             },
             {
                 min: 6, max: 16, message: "密码最小6位,最大16位", trigger: 'blur'
+            }
+        ]
+    }
+}
+
+
+export function revisePasswordRules() {
+    return {
+        oldPassword: [
+            {
+                required: true,
+                message: "请输入旧密码"
+            },
+            {
+                min: 6,
+                max: 16,
+                message: "密码最小6位,最大16位",
+                trigger: 'blur'
+            }
+        ],
+        newPassword: [
+            {
+                required: true,
+                message: "请输入新密码"
+            },
+            {
+                min: 6,
+                max: 16,
+                message: "密码最小6位,最大16位",
+                trigger: 'blur'
+            }
+        ],
+        verifyPassword: [
+            {
+                required: true,
+                message: "请再次输入新密码"
+            },
+            {
+                min: 6,
+                max: 16,
+                message: "密码最小6位,最大16位",
+                trigger: 'blur'
             }
         ]
     }

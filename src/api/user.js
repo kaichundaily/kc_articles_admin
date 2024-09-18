@@ -37,3 +37,11 @@ export const updateUser = async (ID, newImgUrl, newPassword) => {
         password: newPassword
     })
 }
+
+// 修改密码
+export const updatePassword = async (ID, newPassword) => {
+    return await request.postForm("", {
+        ID,
+        password: newPassword
+    })
+}
