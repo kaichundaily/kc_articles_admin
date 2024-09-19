@@ -7,8 +7,9 @@ import {
     CloseOutlined
 } from '@ant-design/icons-vue'
 import { message } from "ant-design-vue";
-import { MdEditor } from "md-editor-v3";
+// import { MdEditor } from "md-editor-v3";
 import { testArticle } from "@/views/article/js/testArticle.js";
+import EditArticle from "@/views/article/modules/EditArticle.vue";
 const loading = ref(false)
 const columns = articleTableColumns()
 
@@ -46,39 +47,6 @@ const submit = () => {
   closeShowEditArticle()
 }
 
-const customToolbar = ref([
-  'bold',
-  'underline',
-  'italic',
-  '-',
-  'title',
-  'strikeThrough',
-  'sub',
-  'sup',
-  'quote',
-  'unorderedList',
-  'orderedList',
-  'task',
-  '-',
-  'codeRow',
-  'code',
-  'link',
-  'image',
-  'table',
-  'mermaid',
-  'katex',
-  '-',
-  'revoke',
-  'next',
-  'save',
-  '=',
-  'pageFullscreen',
-  'fullscreen',
-  'preview',
-  'previewOnly',
-  'htmlPreview',
-  'catalog',
-])
 </script>
 
 <template>
@@ -110,7 +78,6 @@ const customToolbar = ref([
           </a-switch>
         </template>
         <template v-else-if="column.key === 'edit'">
-          <a-button>删除</a-button>
           <a-button type="primary" @click="openShowEditArticle(record.content, record.title, record.id)">编辑</a-button>
         </template>
       </template>
@@ -124,27 +91,32 @@ const customToolbar = ref([
       </template>
     </a-float-button>
     <!--  文章编辑功能  -->
-    <a-modal
-      :title="title || '编辑内容'"
-      :width="`60%`"
-      :open="showMdEditor"
-      @close="closeShowEditArticle"
-      cancel-text="取消编辑"
-      ok-text="提交"
-      @cancel="closeShowEditArticle"
-      @ok="submit"
-    >
-      <div class="custom-modal" style="height: 800px">
-        <MdEditor
-          theme="dark"
-          preview-theme="cyanosis"
-          v-model="content"
-          :preview="true"
-          style="height: 100%"
-          :toolbars="customToolbar"
-        />
-      </div>
-    </a-modal>
+<!--    <a-modal-->
+<!--      :title="title || '编辑内容'"-->
+<!--      :width="`60%`"-->
+<!--      :open="showMdEditor"-->
+<!--      @close="closeShowEditArticle"-->
+<!--      cancel-text="取消编辑"-->
+<!--      ok-text="提交"-->
+<!--      @cancel="closeShowEditArticle"-->
+<!--      @ok="submit"-->
+<!--    >-->
+<!--      <div class="custom-modal" style="height: 800px;">-->
+<!--        <MdEditor-->
+<!--          theme="dark"-->
+<!--          preview-theme="cyanosis"-->
+<!--          v-model="content"-->
+<!--          :preview="true"-->
+<!--          style="height: 100%"-->
+<!--          :toolbars="customToolbar"-->
+<!--        />-->
+<!--      </div>-->
+<!--    </a-modal>-->
+    <edit-article
+      :articleData="{title, showMdEditor, content}"
+      @closeShowEditArticle="closeShowEditArticle"
+      @submit="submit"
+    />
   </div>
 </template>
 
