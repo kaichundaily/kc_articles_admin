@@ -6,47 +6,71 @@ import {
     CheckOutlined,
     CloseOutlined
 } from '@ant-design/icons-vue'
+import { useUserStore } from "@/stores/index.js";
 import { message } from "ant-design-vue";
 // import { MdEditor } from "md-editor-v3";
-import { testArticle } from "@/views/article/js/testArticle.js";
 import EditArticle from "@/views/article/modules/EditArticle.vue";
+
+import { getAllArticle } from "@/api/article.js";
+
 const loading = ref(false)
 const columns = articleTableColumns()
 
-const testContent = testArticle()
-
-const data = ref([{
-  title: "测试文章",
-  tag: "测试文章",
-  status: true,
-  public: false,
-  content: testContent
-}])
+const data = ref([])
 
 const content = ref("")
 const title = ref("")
 const id = ref("")
 const showMdEditor = ref(false)
 
+const userStore = useUserStore()
+// 打开编辑
 const openShowEditArticle = (newContent, newTitle, newID) => {
   content.value = newContent
   title.value = newTitle
   id.value = newID
   showMdEditor.value = true
 }
-
+// 关闭编辑
 const closeShowEditArticle = () => {
   content.value = ""
   title.value = ""
   id.value = ""
   showMdEditor.value = false
 }
-
+// TODO 编辑成功提交
 const submit = () => {
   message.success("模拟提交成功")
+  getAllArticleData(1, 10)
   closeShowEditArticle()
 }
+// 表格分页功能
+const pagination = ref({
+  current: 1,
+  pageSize: 10,
+  total: 0,
+  showSizeChanger: true,
+  pageSizeOptions: ['2','5','10','20','50'],
+  onChange: (page, size) => {
+    pagination.value.current = page
+    pagination.value.pageSize = size
+    getAllArticleData(page, size)
+  }
+})
+// 获取数据
+const getAllArticleData = async (page, size) => {
+  loading.value = true
 
+  await getAllArticle(page, size, userStore.userInfo.id).then((result) => {
+    data.value = result.data.data
+    message.success("表格加载成功")
+  }).catch((err) => {
+    message.error(`表格加载失败:${err}`)
+  }).finally(() => {
+    loading.value = false
+  })
+}
+getAllArticleData(1, 10)
 </script>
 
 <template>
@@ -55,6 +79,7 @@ const submit = () => {
       :columns="columns"
       :loading="loading"
       :data-source="data"
+      :pagination="pagination"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'title'">
@@ -66,13 +91,13 @@ const submit = () => {
           </a-tag>
         </template>
         <template v-else-if="column.key === 'status'">
-          <a-switch v-model:checked="record.status">
+          <a-switch :checked="record.status === 0">
             <template #checkedChildren><check-outlined /></template>
             <template #unCheckedChildren><close-outlined /></template>
           </a-switch>
         </template>
         <template v-else-if="column.key === 'public'">
-          <a-switch v-model:checked="record.public">
+          <a-switch :checked="record.is_public === 0">
             <template #checkedChildren><check-outlined /></template>
             <template #unCheckedChildren><close-outlined /></template>
           </a-switch>
@@ -91,27 +116,6 @@ const submit = () => {
       </template>
     </a-float-button>
     <!--  文章编辑功能  -->
-<!--    <a-modal-->
-<!--      :title="title || '编辑内容'"-->
-<!--      :width="`60%`"-->
-<!--      :open="showMdEditor"-->
-<!--      @close="closeShowEditArticle"-->
-<!--      cancel-text="取消编辑"-->
-<!--      ok-text="提交"-->
-<!--      @cancel="closeShowEditArticle"-->
-<!--      @ok="submit"-->
-<!--    >-->
-<!--      <div class="custom-modal" style="height: 800px;">-->
-<!--        <MdEditor-->
-<!--          theme="dark"-->
-<!--          preview-theme="cyanosis"-->
-<!--          v-model="content"-->
-<!--          :preview="true"-->
-<!--          style="height: 100%"-->
-<!--          :toolbars="customToolbar"-->
-<!--        />-->
-<!--      </div>-->
-<!--    </a-modal>-->
     <edit-article
       :articleData="{title, showMdEditor, content}"
       @closeShowEditArticle="closeShowEditArticle"

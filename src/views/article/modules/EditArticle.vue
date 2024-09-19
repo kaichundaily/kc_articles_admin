@@ -12,6 +12,7 @@ const customToolbar = MarkdownToolbar() || []
 const title = ref("")
 const showMdEditor = ref(false)
 const content = ref("")
+// 初始化数据
 const initData = () => {
   title.value = props.articleData.title
   showMdEditor.value = props.articleData.showMdEditor
@@ -28,7 +29,7 @@ const closeShowEditArticle = () => {
 const submit = () => {
   emit("submit")
 }
-
+// 更新数据
 watch(props, (newValue, oldValue) => {
   initData()
 })

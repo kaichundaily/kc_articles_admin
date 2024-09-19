@@ -18,20 +18,22 @@ const router = useRouter()
 
 const  login = async () => {
   await form.value.validate()
-  try {
-    const res = await userLoginService(formModel.value)
-    userStore.setToken(res.data.token)
-    userStore.setUserInfo({
-      id: res.data.id,
-      username: res.data.username,
-      avatar: res.data.avatar,
-    })
-    message.success('登录成功')
-
-    await router.push("/")
-  } catch (error) {
-    message.error('登录失败')
-  }
+  await userLoginService(formModel.value).then((result) => {
+    if (result.code === 200) {
+      userStore.setToken(result.data.token)
+      userStore.setUserInfo({
+        id: result.data.id,
+        username: result.data.username,
+        avatar: result.data.avatar
+      })
+      message.success("登录成功")
+      router.push("/")
+    } else {
+      message.error(result.message)
+    }
+  }).catch((error) => {
+    message.error(`登录失败:${error}`)
+  })
 }
 
 </script>
