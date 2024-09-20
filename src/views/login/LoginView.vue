@@ -31,8 +31,8 @@ const  login = async () => {
     } else {
       message.error(result.message)
     }
-  }).catch((error) => {
-    message.error(`登录失败:${error}`)
+  }).catch(() => {
+    message.error(`登录失败`)
   })
 }
 

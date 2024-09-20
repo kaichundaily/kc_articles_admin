@@ -8,10 +8,9 @@ import {
 } from '@ant-design/icons-vue'
 import { useUserStore } from "@/stores/index.js";
 import { message } from "ant-design-vue";
-// import { MdEditor } from "md-editor-v3";
 import EditArticle from "@/views/article/modules/EditArticle.vue";
 
-import { getAllArticle } from "@/api/article.js";
+import { getAllArticle, isPublicArticle, isStatusArticle } from "@/api/article.js";
 
 const loading = ref(false)
 const columns = articleTableColumns()
@@ -60,7 +59,7 @@ const pagination = ref({
 // 获取数据
 const getAllArticleData = async (page, size) => {
   loading.value = true
-
+  // 分页获取当前登录用户文章
   await getAllArticle(page, size, userStore.userInfo.id).then((result) => {
     data.value = result.data.data
     message.success("表格加载成功")
@@ -69,6 +68,40 @@ const getAllArticleData = async (page, size) => {
   }).finally(() => {
     loading.value = false
   })
+}
+
+// switch开关
+const changeSwitch = async (record, mode) => {
+  // console.log(record.article_id)
+  loading.value = true
+  if (mode === "status") {
+    await isStatusArticle(record.article_id,record.status === 1 ? 0 : 1).then((result) => {
+      if (result.code === 200) {
+        getAllArticleData(1,10)
+        message.success("修改成功")
+      }
+    }).catch(() => {
+      message.error("修改失败")
+    }).finally(() => {
+      loading.value = false
+    })
+  } else if (mode === "is_public") {
+    if (record.status === 1) {
+      message.error("请先发布文章")
+      loading.value = false
+      return
+    }
+    await isPublicArticle(record.article_id,record.is_public === 1 ? 0 : 1).then((result) => {
+      if (result.code === 200) {
+        getAllArticleData(1,10)
+        message.success("修改成功")
+      }
+    }).catch(() => {
+      message.error("修改失败")
+    }).finally(() => {
+      loading.value = false
+    })
+  }
 }
 getAllArticleData(1, 10)
 </script>
@@ -91,13 +124,13 @@ getAllArticleData(1, 10)
           </a-tag>
         </template>
         <template v-else-if="column.key === 'status'">
-          <a-switch :checked="record.status === 0">
+          <a-switch @click="changeSwitch(record,'status')" :checked="record.status === 0">
             <template #checkedChildren><check-outlined /></template>
             <template #unCheckedChildren><close-outlined /></template>
           </a-switch>
         </template>
         <template v-else-if="column.key === 'public'">
-          <a-switch :checked="record.is_public === 0">
+          <a-switch @click="changeSwitch(record,'is_public')" :checked="record.is_public === 0">
             <template #checkedChildren><check-outlined /></template>
             <template #unCheckedChildren><close-outlined /></template>
           </a-switch>
@@ -117,7 +150,7 @@ getAllArticleData(1, 10)
     </a-float-button>
     <!--  文章编辑功能  -->
     <edit-article
-      :articleData="{title, showMdEditor, content}"
+      :articleData="{ title, showMdEditor, content }"
       @closeShowEditArticle="closeShowEditArticle"
       @submit="submit"
     />

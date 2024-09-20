@@ -49,8 +49,8 @@ export function articleTableColumns() {
             align: 'center'
         },
         {
-            title: '状态',
-            dataIndex: '状态',
+            title: '发布',
+            dataIndex: '发布',
             key: 'status',
             align: 'center'
         },

@@ -5,7 +5,7 @@ import { ref, watch } from "vue";
 import { MarkdownToolbar } from "@/views/article/js/Tools.js";
 
 const props = defineProps({
-  articleData: Map
+  articleData: Object
 })
 const customToolbar = MarkdownToolbar() || []
 // 初始化数据
