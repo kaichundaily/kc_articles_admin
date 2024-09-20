@@ -75,7 +75,6 @@ const changeGetAllArticleData = async (page, size) => {
   await getAllArticle(page, size, userStore.userInfo.id).then((result) => {
     data.value = result.data.data
     pagination.value.total = result.data.total
-    message.success("表格加载成功")
   }).catch((err) => {
     message.error(`表格加载失败:${err}`)
   })
