@@ -62,6 +62,7 @@ const getAllArticleData = async (page, size) => {
   // 分页获取当前登录用户文章
   await getAllArticle(page, size, userStore.userInfo.id).then((result) => {
     data.value = result.data.data
+    pagination.value.total = result.data.total
     message.success("表格加载成功")
   }).catch((err) => {
     message.error(`表格加载失败:${err}`)
@@ -70,14 +71,24 @@ const getAllArticleData = async (page, size) => {
   })
 }
 
-// switch开关
+const changeGetAllArticleData = async (page, size) => {
+  await getAllArticle(page, size, userStore.userInfo.id).then((result) => {
+    data.value = result.data.data
+    pagination.value.total = result.data.total
+    message.success("表格加载成功")
+  }).catch((err) => {
+    message.error(`表格加载失败:${err}`)
+  })
+}
+
+// 文章状态变更相关逻辑
 const changeSwitch = async (record, mode) => {
   // console.log(record.article_id)
   loading.value = true
   if (mode === "status") {
-    await isStatusArticle(record.article_id,record.status === 1 ? 0 : 1).then((result) => {
+    await isStatusArticle(record.article_id,record.status === 1 ? 0 : 1).then( async (result) => {
       if (result.code === 200) {
-        getAllArticleData(1,10)
+        await changeGetAllArticleData(pagination.value.current,10)
         message.success("修改成功")
       }
     }).catch(() => {
@@ -91,9 +102,9 @@ const changeSwitch = async (record, mode) => {
       loading.value = false
       return
     }
-    await isPublicArticle(record.article_id,record.is_public === 1 ? 0 : 1).then((result) => {
+    await isPublicArticle(record.article_id,record.is_public === 1 ? 0 : 1).then(async (result) => {
       if (result.code === 200) {
-        getAllArticleData(1,10)
+        await changeGetAllArticleData(pagination.value.current,10)
         message.success("修改成功")
       }
     }).catch(() => {
