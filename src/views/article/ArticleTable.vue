@@ -12,6 +12,8 @@ import EditArticle from "@/views/article/modules/EditArticle.vue";
 
 import { getAllArticle, isPublicArticle, isStatusArticle } from "@/api/article.js";
 
+import AddArticle from "@/views/article/modules/AddArticle.vue";
+
 const loading = ref(false)
 const columns = articleTableColumns()
 
@@ -113,6 +115,17 @@ const changeSwitch = async (record, mode) => {
     })
   }
 }
+
+// 2.1 添加新的文章记录
+const addShow = ref(false)
+
+
+const closeAddShow = () => {
+  addShow.value = false
+}
+
+
+
 getAllArticleData(1, 10)
 </script>
 
@@ -129,9 +142,14 @@ getAllArticleData(1, 10)
           {{ record.title }}
         </template>
         <template v-else-if="column.key === 'tag'">
-          <a-tag  color="blue">
-            {{ record.tag }}
+          <a-tag  color="blue" v-for="(tag, index) in record.tag" :key="index">
+            {{ tag }}
           </a-tag>
+<!--          <div v-for="(tag, index) in record.tag" :key="index">-->
+<!--            <a-tag  color="blue">-->
+<!--              {{ tag }}-->
+<!--            </a-tag>-->
+<!--          </div>-->
         </template>
         <template v-else-if="column.key === 'status'">
           <a-switch @click="changeSwitch(record,'status')" :checked="record.status === 0">
@@ -153,6 +171,7 @@ getAllArticleData(1, 10)
     <a-float-button
       type="primary"
       class="custom-float-button"
+      @click="addShow = true"
     >
       <template #icon>
         <EditOutlined class="custom-float-button-icon"/>
@@ -165,6 +184,11 @@ getAllArticleData(1, 10)
       @submit="submit"
     />
   </div>
+<!--  添加文章 -->
+  <add-article
+    :addShow="addShow"
+    @closeAddShow="closeAddShow"
+  />
 </template>
 
 <style scoped>
