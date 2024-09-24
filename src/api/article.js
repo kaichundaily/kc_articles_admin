@@ -25,3 +25,14 @@ export const isPublicArticle = async (id, number) => {
     }
     return await request.post("/api/isPublicArticle", data)
 }
+
+// 添加文章
+export const addArticle = async (img,title,tag,id) => {
+    let data = {
+        id,
+        articleImg: img,
+        title: title,
+        tag: tag
+    }
+    return await request.post("/api/addArticle", data)
+}

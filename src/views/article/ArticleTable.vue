@@ -145,11 +145,6 @@ getAllArticleData(1, 10)
           <a-tag  color="blue" v-for="(tag, index) in record.tag" :key="index">
             {{ tag }}
           </a-tag>
-<!--          <div v-for="(tag, index) in record.tag" :key="index">-->
-<!--            <a-tag  color="blue">-->
-<!--              {{ tag }}-->
-<!--            </a-tag>-->
-<!--          </div>-->
         </template>
         <template v-else-if="column.key === 'status'">
           <a-switch @click="changeSwitch(record,'status')" :checked="record.status === 0">

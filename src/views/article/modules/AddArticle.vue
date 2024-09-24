@@ -3,10 +3,14 @@
 import { message } from "ant-design-vue";
 import {ref} from "vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
+import { addArticle } from "@/api/article.js"
+import { useUserStore } from "@/stores/index.js";
 // 0.1 接收数据
 const props = defineProps({
   addShow: Boolean
 })
+
+const userStore = useUserStore()
 
 const emit = defineEmits(["closeAddShow"])
 // 1. 添加文章记录
@@ -14,23 +18,44 @@ const emit = defineEmits(["closeAddShow"])
 const closeAddShow = () => {
   emit('closeAddShow')
   tagList.value = []
+  title.value = ""
 }
 
 // 1.2 提交编辑文章记录
-const submit = () => {
+const submit = async () => {
+  if (title.value.length <= 0 && tagList.value.length <= 0) {
+    message.error("请输入标签或标题")
+    return
+  }
+  if (title.value.length <= 0) {
+    message.error("标题不能为空")
+    closeAddShow()
+    return
+  }
   // message.success("模拟提交文章")
   if (tagList.value.length <= 0) {
     message.error("标签不能为空")
     closeAddShow()
     return
   }
-  message.success("模拟提交文章")
-  closeAddShow()
+  await addArticle("",title.value, tagList.value, userStore.userInfo.id).then((result) => {
+    if (result.code === 200) {
+      console.log(result)
+      message.success("Success")
+    }
+  }).catch((err) => {
+    console.log(err)
+    message.error("Error")
+  }).finally(() => {
+    // message.success("模拟提交文章")
+    closeAddShow()
+  })
 }
 // 2. 添加标签相关
 const isShowTagInput = ref(false)
 const tagList = ref([])
 const tagInputValue = ref("")
+const title = ref("")
 // 2.1 显示标签输入框
 const showInput = () => {
   isShowTagInput.value = true
@@ -65,8 +90,10 @@ const deleTag = (removeTag) => {
       </a-form-item>
       <a-form-item>
         <div>标题:</div>
-        <a-input>
-
+        <a-input
+          v-model:value="title"
+          placeholder="input title"
+        >
         </a-input>
       </a-form-item>
       <a-form-item>
@@ -84,6 +111,7 @@ const deleTag = (removeTag) => {
           :style="{ width: '78px' }"
           @blur="submitTag"
           @keyup.enter="submitTag"
+          placeholder="input tag"
         />
         <a-tag v-else-if="!isShowTagInput && tagList.length < 3" style="background: #fff; border-style: dashed" @click="showInput">
           <PlusOutlined />
