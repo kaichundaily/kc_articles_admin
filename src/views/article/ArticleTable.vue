@@ -41,8 +41,14 @@ const closeShowEditArticle = () => {
 }
 // 编辑成功
 const submit = () => {
-  getAllArticleData(pagination.value.current, 10)
-  closeShowEditArticle()
+  getAllArticleData(pagination.value.current, 10).then((result) => {
+    data.value = result.data.data
+    pagination.value.total = result.data.total
+  }).then(() => {
+    message.error("表格加载失败")
+  }).finally(() => {
+    closeShowEditArticle()
+  })
 }
 // 表格分页功能
 const pagination = ref({
