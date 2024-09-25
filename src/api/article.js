@@ -36,3 +36,11 @@ export const addArticle = async (img,title,tag,id) => {
     }
     return await request.post("/api/addArticle", data)
 }
+
+// 编辑文章
+export const editArticle = async (article_id, content) => {
+    return await request.post("/api/editArticle", {
+        article_id,
+        content
+    })
+}

@@ -4,6 +4,7 @@ import { MdEditor } from "md-editor-v3";
 import { ref, watch } from "vue";
 import { MarkdownToolbar } from "@/views/article/js/Tools.js";
 import { UploadImage } from "@/api/file.js";
+import { editArticle } from "@/api/article.js";
 import { message } from "ant-design-vue";
 
 const props = defineProps({
@@ -14,11 +15,23 @@ const customToolbar = MarkdownToolbar() || []
 const title = ref("")
 const showMdEditor = ref(false)
 const content = ref("")
+const articleID = ref("")
 // 初始化数据
 const initData = () => {
-  title.value = props.articleData.title
-  showMdEditor.value = props.articleData.showMdEditor
-  content.value = props.articleData.content
+  switch (props.articleData.showMdEditor) {
+    case true:
+      title.value = props.articleData.title
+      showMdEditor.value = props.articleData.showMdEditor
+      content.value = props.articleData.content
+      articleID.value = props.articleData.id
+      break
+    case false:
+      title.value = ""
+      showMdEditor.value = false
+      content.value = ""
+      articleID.value = ""
+      break
+  }
 }
 
 const emit = defineEmits(["closeShowEditArticle","submit"])
@@ -27,13 +40,19 @@ const emit = defineEmits(["closeShowEditArticle","submit"])
 const closeShowEditArticle = () => {
   emit("closeShowEditArticle")
 }
-const submit = () => {
+const submit = async () => {
+  await editArticle(articleID.value,content.value).then((result) => {
+    if (result.code === 200) {
+      message.success("修改成功")
+    }
+  }).catch(() => {
+    message.error("修改失败")
+  })
   emit("submit")
 }
 
 // 上传图片
 const uploadImage = async (files, callback) => {
-  console.log(files[0])
   await UploadImage(files[0]).then((result) => {
     console.log(result.data.imgUrl)
     // alert(result.data.imgUrl)

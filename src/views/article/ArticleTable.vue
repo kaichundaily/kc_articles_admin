@@ -39,10 +39,9 @@ const closeShowEditArticle = () => {
   id.value = ""
   showMdEditor.value = false
 }
-// TODO 编辑成功提交
+// 编辑成功
 const submit = () => {
-  message.success("模拟提交成功")
-  getAllArticleData(1, 10)
+  getAllArticleData(pagination.value.current, 10)
   closeShowEditArticle()
 }
 // 表格分页功能
@@ -84,7 +83,6 @@ const changeGetAllArticleData = async (page, size) => {
 
 // 文章状态变更相关逻辑
 const changeSwitch = async (record, mode) => {
-  // console.log(record.article_id)
   loading.value = true
   if (mode === "status") {
     await isStatusArticle(record.article_id,record.status === 1 ? 0 : 1).then( async (result) => {
@@ -159,7 +157,7 @@ getAllArticleData(1, 10)
           </a-switch>
         </template>
         <template v-else-if="column.key === 'edit'">
-          <a-button type="primary" @click="openShowEditArticle(record.content, record.title, record.id)">编辑</a-button>
+          <a-button type="primary" @click="openShowEditArticle(record.content, record.title, record.article_id)">编辑</a-button>
         </template>
       </template>
     </a-table>
@@ -174,7 +172,7 @@ getAllArticleData(1, 10)
     </a-float-button>
     <!--  文章编辑功能  -->
     <edit-article
-      :articleData="{ title, showMdEditor, content }"
+      :articleData="{ id, title, showMdEditor, content }"
       @closeShowEditArticle="closeShowEditArticle"
       @submit="submit"
     />
