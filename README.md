@@ -1,35 +1,24 @@
 # kc_articles_admin
-
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
+## 项目介绍
+本项目使用vite,vue,ant-design-vue,axios,echarts,md-editor-v3,pinia,vue-router
++ vite: 为项目的打包创建工具
++ vue: 项目的框架
++ ant-design-vue: ui库
++ axios: 与后端进行交互通信
++ echarts: 图表库
++ md-editor-v3: markdown 库
++ pinia: 状态管理器
++ vue-router: 路由组件
+## 项目启动,打包
++ 安装三方依赖:
+```shell
 pnpm install
 ```
-
-### Compile and Hot-Reload for Development
-
-```sh
-pnpm dev
++ 启动项目
+```shell
+pnpm run dev
 ```
-
-### Compile and Minify for Production
-
-```sh
-pnpm build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-pnpm lint
++ 打包项目
+```shell
+pnpm run build
 ```
