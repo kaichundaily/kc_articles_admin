@@ -3,6 +3,8 @@
 import { MdEditor } from "md-editor-v3";
 import { ref, watch } from "vue";
 import { MarkdownToolbar } from "@/views/article/js/Tools.js";
+import { UploadImage } from "@/api/file.js";
+import { message } from "ant-design-vue";
 
 const props = defineProps({
   articleData: Object
@@ -25,10 +27,24 @@ const emit = defineEmits(["closeShowEditArticle","submit"])
 const closeShowEditArticle = () => {
   emit("closeShowEditArticle")
 }
-
 const submit = () => {
   emit("submit")
 }
+
+// 上传图片
+const uploadImage = async (files, callback) => {
+  console.log(files[0])
+  await UploadImage(files[0]).then((result) => {
+    console.log(result.data.imgUrl)
+    // alert(result.data.imgUrl)
+    callback([result.data.imgUrl])
+    message.success("图片上传成功")
+  }).catch((err) => {
+    message.error("图片上传失败")
+  })
+}
+
+
 // 更新数据
 watch(props, (newValue, oldValue) => {
   initData()
@@ -57,6 +73,7 @@ watch(props, (newValue, oldValue) => {
           :preview="true"
           style="height: 100%"
           :toolbars="customToolbar"
+          :on-upload-img="uploadImage"
       />
     </div>
   </a-modal>
