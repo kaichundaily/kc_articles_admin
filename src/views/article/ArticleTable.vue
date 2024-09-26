@@ -150,7 +150,7 @@ getAllArticleData(1, 10)
       :columns="columns"
       :loading="loading"
       :data-source="data"
-      :pagination="pagination"
+      :pagination="false"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'title'">
@@ -176,6 +176,21 @@ getAllArticleData(1, 10)
         <template v-else-if="column.key === 'edit'">
           <a-button type="primary" @click="openShowEditArticle(record.content, record.title, record.article_id)">编辑</a-button>
         </template>
+      </template>
+      <!-- 自定义分页部分 -->
+      <template #footer>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <!-- 右侧自定义按钮 -->
+          <a-pagination
+            :current="pagination.current"
+            :page-size="pagination.pageSize"
+            :total="pagination.total"
+            :show-size-changer="pagination.showSizeChanger"
+            :page-size-options="pagination.pageSizeOptions"
+            @change="pagination.onChange"
+          ></a-pagination>
+          <a-button type="primary" @click="">删除</a-button>
+        </div>
       </template>
     </a-table>
     <a-float-button
