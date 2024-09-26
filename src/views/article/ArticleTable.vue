@@ -139,8 +139,13 @@ const submitAddShow = async () => {
     closeAddShow()
   })
 }
+// 3 文章批量删除功能
+const buttonType = ref(false)
 
-
+// 3.1 文章删除
+const deleArticle = () => {
+  message.success("模拟删除成功")
+}
 getAllArticleData(1, 10)
 </script>
 
@@ -189,7 +194,9 @@ getAllArticleData(1, 10)
             :page-size-options="pagination.pageSizeOptions"
             @change="pagination.onChange"
           ></a-pagination>
-          <a-button type="primary" @click="">删除</a-button>
+          <a-button v-if="buttonType" type="primary" @click="deleArticle">删除</a-button>
+          <a-button v-else type="default">删除</a-button>
+
         </div>
       </template>
     </a-table>
