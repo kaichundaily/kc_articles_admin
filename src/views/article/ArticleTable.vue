@@ -40,11 +40,11 @@ const closeShowEditArticle = () => {
   showMdEditor.value = false
 }
 // 编辑成功
-const submit = () => {
-  getAllArticleData(pagination.value.current, 10).then((result) => {
+const submit = async () => {
+  await getAllArticle(pagination.value.current, 10, userStore.userInfo.id).then((result) => {
     data.value = result.data.data
     pagination.value.total = result.data.total
-  }).then(() => {
+  }).catch(() => {
     message.error("表格加载失败")
   }).finally(() => {
     closeShowEditArticle()
@@ -129,6 +129,17 @@ const closeAddShow = () => {
 }
 
 
+const submitAddShow = async () => {
+  await getAllArticle(pagination.value.current, 10, userStore.userInfo.id).then((result) => {
+    data.value = result.data.data
+    pagination.value.total = result.data.total
+  }).catch(() => {
+    message.error("表格加载失败")
+  }).finally(() => {
+    closeAddShow()
+  })
+}
+
 
 getAllArticleData(1, 10)
 </script>
@@ -187,6 +198,7 @@ getAllArticleData(1, 10)
   <add-article
     :addShow="addShow"
     @closeAddShow="closeAddShow"
+    @submitAddShow="submitAddShow"
   />
 </template>
 

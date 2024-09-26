@@ -1,7 +1,7 @@
 <script setup>
 // 0 引入
 import { message } from "ant-design-vue";
-import {ref} from "vue";
+import { ref } from "vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { addArticle } from "@/api/article.js"
 import { useUserStore } from "@/stores/index.js";
@@ -12,7 +12,7 @@ const props = defineProps({
 
 const userStore = useUserStore()
 
-const emit = defineEmits(["closeAddShow"])
+const emit = defineEmits(["closeAddShow","submitAddShow"])
 // 1. 添加文章记录
 // 1.1 取消添加文章记录
 const closeAddShow = () => {
@@ -21,6 +21,11 @@ const closeAddShow = () => {
   title.value = ""
 }
 
+const submitAddShow = () => {
+  emit('submitAddShow')
+  tagList.value = []
+  title.value = ""
+}
 // 1.2 提交编辑文章记录
 const submit = async () => {
   if (title.value.length <= 0 && tagList.value.length <= 0) {
@@ -48,7 +53,7 @@ const submit = async () => {
     message.error("Error")
   }).finally(() => {
     // message.success("模拟提交文章")
-    closeAddShow()
+    submitAddShow()
   })
 }
 // 2. 添加标签相关
@@ -62,7 +67,6 @@ const showInput = () => {
 }
 // 2.2 关闭标签输入框
 const submitTag = () => {
-  console.log(tagInputValue.value)
   if (tagInputValue.value === '') {
     isShowTagInput.value = false
     return
