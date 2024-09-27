@@ -68,10 +68,7 @@ const getAllArticleData = async (page, size) => {
   loading.value = true
   // 分页获取当前登录用户文章
   await getAllArticle(page, size, userStore.userInfo.id).then((result) => {
-    // data.value = result.data.data
-    // data.value.forEach((item, index) => {
-    //   item.key = index
-    // })
+    // 若使用table的复选框需要给每一行加上key
     let resultData = result.data.data
     resultData.forEach((item, index) => {
       item.key = index
@@ -88,7 +85,12 @@ const getAllArticleData = async (page, size) => {
 
 const changeGetAllArticleData = async (page, size) => {
   await getAllArticle(page, size, userStore.userInfo.id).then((result) => {
-    data.value = result.data.data
+    // 若使用table的复选框需要给每一行加上key
+    let resultData = result.data.data
+    resultData.forEach((item, index) => {
+      item.key = index
+    })
+    data.value = resultData
     pagination.value.total = result.data.total
   }).catch((err) => {
     message.error(`表格加载失败:${err}`)
@@ -151,9 +153,8 @@ getAllArticleData(1, 10)
 // 3 文章批量删除功能
 
 const state = reactive({
-  selectedRow: [],
-  selectedRowKeys: [],
-  // Check here to configure the default column
+  selectedRow: [],     // 被选中行内容
+  selectedRowKeys: [], // 被选中行key
   loading: false,
 });
 const hasSelected = computed(() => state.selectedRowKeys.length > 0);
@@ -166,8 +167,8 @@ const start = () => {
     state.selectedRowKeys = [];
   }, 1000);
 };
-const onSelectChange = (selectedRow, selectedRowKeys) => {
-  console.log('selectedRowKeys changed: ', selectedRowKeys);
+const onSelectChange = (selectedRowKeys, selectedRow) => {
+  // console.log('selectedRowKeys changed: ', selectedRowKeys);
   state.selectedRow = selectedRow
   state.selectedRowKeys = selectedRowKeys;
 };
@@ -176,7 +177,7 @@ const onSelectChange = (selectedRow, selectedRowKeys) => {
 <template>
   <div>
     <a-table
-        :row-selection="{ selectedRowKeys: state.selectedRow, onChange: onSelectChange }"
+        :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
         :columns="columns"
         :loading="loading"
         :data-source="data"
