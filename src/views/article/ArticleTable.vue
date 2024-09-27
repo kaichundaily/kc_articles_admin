@@ -1,5 +1,5 @@
 <script setup>
-import {computed, reactive, ref, watch} from "vue";
+import { computed, reactive, ref } from "vue";
 import { articleTableColumns } from "@/utils/columns.js";
 import {
   EditOutlined,
