@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref, watch} from "vue";
+import {computed, reactive, ref, watch} from "vue";
 import { articleTableColumns } from "@/utils/columns.js";
 import {
   EditOutlined,
@@ -68,7 +68,15 @@ const getAllArticleData = async (page, size) => {
   loading.value = true
   // 分页获取当前登录用户文章
   await getAllArticle(page, size, userStore.userInfo.id).then((result) => {
-    data.value = result.data.data
+    // data.value = result.data.data
+    // data.value.forEach((item, index) => {
+    //   item.key = index
+    // })
+    let resultData = result.data.data
+    resultData.forEach((item, index) => {
+      item.key = index
+    })
+    data.value = resultData
     pagination.value.total = result.data.total
     message.success("表格加载成功")
   }).catch((err) => {
@@ -141,35 +149,34 @@ const submitAddShow = async () => {
 }
 getAllArticleData(1, 10)
 // 3 文章批量删除功能
-const selectedRowKeys = ref([])
 
-const onChange = (row, rowKeys) => {
-  selectedRowKeys.value = rowKeys
-}
-
-// const isChickShow = computed(() => selectedRowKeys.value.length > 0)
-const isShowChick = ref(false)
-// 3.1 文章删除
-const deleArticle = () => {
-  message.success("模拟删除成功")
-  selectedRowKeys.value = []
-}
-
-const initDeleArticle = () => {
-  isShowChick.value = selectedRowKeys.value.length > 0;
-}
-
-watch(selectedRowKeys,(newValue, oldValue) => {
-  console.log(newValue)
-  console.log(oldValue)
-  initDeleArticle()
-})
+const state = reactive({
+  selectedRow: [],
+  selectedRowKeys: [],
+  // Check here to configure the default column
+  loading: false,
+});
+const hasSelected = computed(() => state.selectedRowKeys.length > 0);
+const start = () => {
+  state.loading = true;
+  // ajax request after empty completing
+  setTimeout(() => {
+    state.loading = false;
+    state.selectedRow = []
+    state.selectedRowKeys = [];
+  }, 1000);
+};
+const onSelectChange = (selectedRow, selectedRowKeys) => {
+  console.log('selectedRowKeys changed: ', selectedRowKeys);
+  state.selectedRow = selectedRow
+  state.selectedRowKeys = selectedRowKeys;
+};
 </script>
 
 <template>
   <div>
     <a-table
-        :row-selection="{ selectedRowKeys, onChange }"
+        :row-selection="{ selectedRowKeys: state.selectedRow, onChange: onSelectChange }"
         :columns="columns"
         :loading="loading"
         :data-source="data"
@@ -177,7 +184,16 @@ watch(selectedRowKeys,(newValue, oldValue) => {
     >
       <!-- 自定义分页部分 -->
       <template #title>
-        <a-button :disabled="!isShowChick" type="primary" @click="deleArticle">删除</a-button>
+        <div style="margin-bottom: 16px">
+          <a-button type="primary" :disabled="!hasSelected" :loading="state.loading" @click="start">
+            删除
+          </a-button>
+          <span style="margin-left: 8px">
+            <template v-if="hasSelected">
+              {{ `Select ${state.selectedRowKeys.length} items` }}
+            </template>
+          </span>
+        </div>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'title'">
