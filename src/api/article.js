@@ -46,11 +46,9 @@ export const editArticle = async (article_id, content) => {
 }
 
 export const deleArticle = async (articleIdList) => {
-    const formData = new FormData()
-    formData.append('articleIdList', articleIdList);
-    return await request.post("/api/deleArticle", formData, {
+    return await request.post("/api/deleArticle", articleIdList, {
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded' // 或者使用 multipart/form-data 如果有文件上传
+            'Content-Type': 'application/json' // 或者使用 multipart/form-data 如果有文件上传
         }
     })
 }
