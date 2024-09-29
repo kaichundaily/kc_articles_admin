@@ -10,7 +10,7 @@ import { useUserStore } from "@/stores/index.js";
 import { message } from "ant-design-vue";
 import EditArticle from "@/views/article/modules/EditArticle.vue";
 
-import { getAllArticle, isPublicArticle, isStatusArticle } from "@/api/article.js";
+import { getAllArticle, isPublicArticle, isStatusArticle, deleArticle } from "@/api/article.js";
 
 import AddArticle from "@/views/article/modules/AddArticle.vue";
 
@@ -141,7 +141,11 @@ const closeAddShow = () => {
 
 const submitAddShow = async () => {
   await getAllArticle(pagination.value.current, 10, userStore.userInfo.id).then((result) => {
-    data.value = result.data.data
+    let resultData = result.data.data
+    resultData.forEach((item, index) => {
+      item.key = index
+    })
+    data.value = resultData
     pagination.value.total = result.data.total
   }).catch(() => {
     message.error("表格加载失败")
@@ -158,14 +162,22 @@ const state = reactive({
   loading: false,
 });
 const hasSelected = computed(() => state.selectedRowKeys.length > 0);
-const start = () => {
+const start = async () => {
   state.loading = true;
-  // ajax request after empty completing
-  setTimeout(() => {
-    state.loading = false;
+  const articleIdList = state.selectedRow.map(item => item.article_id)
+  console.log(articleIdList)
+  await deleArticle(articleIdList).then((result) => {
+    if (result.code === 200) {
+      message.success("删除成功")
+      submitAddShow()
+    }
+  }).catch(() => {
+    message.error("删除失败")
+  }).finally(() => {
     state.selectedRow = []
-    state.selectedRowKeys = [];
-  }, 1000);
+    state.selectedRowKeys = []
+    state.loading = false
+  })
 };
 const onSelectChange = (selectedRowKeys, selectedRow) => {
   // console.log('selectedRowKeys changed: ', selectedRowKeys);
