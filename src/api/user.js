@@ -45,3 +45,15 @@ export const updatePassword = async (ID, newPassword) => {
         password: newPassword
     })
 }
+
+// 关闭账户
+export const closeUser = async (id, num) => {
+    return await request.post("/api/closeUser",{
+        id,
+        num
+    },{
+        headers: {
+            'Content-Type': 'application/json' // 或者使用 multipart/form-data 如果有文件上传
+        }
+    })
+}

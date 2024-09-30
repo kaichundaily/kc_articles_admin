@@ -1,9 +1,10 @@
 <script setup>
 import { ref } from "vue";
-import { getAllUser, deleUser } from '@/api/user.js'
+import { getAllUser, deleUser,closeUser } from '@/api/user.js'
+import { DeleImg } from "@/api/file.js";
 import { message } from "ant-design-vue";
 import { userTableColumns } from "@/utils/columns.js";
-import { EditOutlined } from "@ant-design/icons-vue";
+import { EditOutlined,CheckOutlined,CloseOutlined } from "@ant-design/icons-vue";
 import EditUser from "@/views/user/modules/AddUser.vue";
 
 
@@ -27,14 +28,6 @@ const data = ref([])
 const loading = ref(false)
 const getAllUserInfo = async (page, size) => {
   loading.value = true
-  // let res = null
-  // try {
-  //   res = await getAllUser(page, size)
-  // } catch (err) {
-  //   message.error("查询失败")
-  //   loading.value = false
-  //   return
-  // }
   await getAllUser(page, size).then((result) => {
     data.value = result.data.data
     pagination.value.total = result.data.total
@@ -79,8 +72,10 @@ const closeSubmit = () => {
 // 2. 删除时弹出确认框
 const delShow = ref(false)
 const delID = ref("")
-const delUser = (id) => {
+const delArticleUrl = ref("")
+const delUser = (id,articleUrl) => {
   delID.value = id
+  delArticleUrl.value = articleUrl
   delShow.value = true
 }
 const cloesDelUser = () => {
@@ -89,6 +84,16 @@ const cloesDelUser = () => {
 }
 
 const deleUserInfo = async () => {
+  delShow.value = false
+  loading.value = true
+  const delResult = await DeleImg(delArticleUrl.value)
+  if (delResult.code !== 200) {
+    message.error("删除失败")
+    delArticleUrl.value = ""
+    loading.value = false
+    return
+  }
+  delArticleUrl.value = ""
   await deleUser(delID.value).then((reslut) => {
     if (reslut.code === 200) {
       message.success(reslut.message)
@@ -99,11 +104,28 @@ const deleUserInfo = async () => {
     message.error(`删除失败: ${err}`)
   }).finally(() => {
     delShow.value = false
-    getAllUserInfo(1, 10)
+    delID.value = ""
+    getAllUserInfo(pagination.value.current, 10)
   })
 }
 // 数据初始化
 getAllUserInfo(1, 10)
+
+// 关闭账户
+const CloseUser = async (record) => {
+  loading.value = true
+  if (record.username === "admin") {
+    message.warning("admin账户禁止关闭")
+    loading.value = false
+    return
+  }
+  const result = await closeUser(record.ID,record.status === 0 ? 1 : 0)
+  if (result.code !== 200) {
+    message.error("修改失败")
+    return
+  }
+  getAllUserInfo(pagination.value.current, 10)
+}
 </script>
 
 <template>
@@ -126,11 +148,14 @@ getAllUserInfo(1, 10)
           <a-avatar v-else shape="square">无</a-avatar>
         </template>
         <template v-else-if="column.key === 'status'">
-<!--          TODO-->
+          <a-switch @click="CloseUser(record)" :checked="record.status === 0">
+            <template #checkedChildren><check-outlined/></template>
+            <template #unCheckedChildren><close-outlined /></template>
+          </a-switch>
         </template>
         <template v-else-if="column.key === 'edit'">
           <a-button type="text" style="color: dodgerblue" @click="openDrawer('edit',record)">编辑</a-button>
-          <a-button v-if="record.username !== 'admin'" type="text" style="color: dodgerblue" @click="delUser(record.ID)">删除</a-button>
+          <a-button v-if="record.username !== 'admin'" type="text" style="color: dodgerblue" @click="delUser(record.ID, record.avatar)">删除</a-button>
         </template>
       </template>
     </a-table>
