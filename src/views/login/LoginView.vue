@@ -16,7 +16,7 @@ const form = ref()
 const userStore = useUserStore()
 const router = useRouter()
 
-const  login = async () => {
+const login = async () => {
   await form.value.validate()
   await userLoginService(formModel.value).then((result) => {
     if (result.code === 200) {
@@ -39,49 +39,47 @@ const  login = async () => {
 </script>
 
 <template>
-  <div class="login">
-    <a-card title="登录" class="login-form">
-      <a-form :rules="rules" ref="form" :model="formModel">
-        <a-form-item
-            name="username"
-        >
-          <a-input size="large" v-model:value="formModel.username">
-            <template #prefix>
-              <UserOutlined class="site-form-item-icon" />
-            </template>
-          </a-input>
-        </a-form-item>
-        <a-form-item name="password">
-          <a-input-password size="large" v-model:value="formModel.password">
-            <template #prefix>
-              <LockOutlined class="site-form-item-icon" />
-            </template>
-          </a-input-password>
-        </a-form-item>
-        <a-form-item>
-          <a-button style="width: 100%" size="large" @click="login">登录</a-button>
-        </a-form-item>
-      </a-form>
-    </a-card>
-  </div>
+    <section class="w3l-hotair-form">
+        <h1>Report Login Form</h1>
+        <div class="container">
+            <!-- /form -->
+            <div class="workinghny-form-grid">
+                <div class="main-hotair">
+                    <div class="content-wthree">
+                        <h2>Log In</h2>
+                        <a-form :rules="rules" ref="form" :model="formModel">
+                          <a-form-item name="username">
+                            <a-input size="large" v-model:value="formModel.username">
+                              <template #prefix>
+                                <UserOutlined class="site-form-item-icon"/>
+                              </template>
+                            </a-input>
+                          </a-form-item>
+                          <a-form-item name="password">
+                            <a-input-password size="large" v-model:value="formModel.password">
+                              <template #prefix>
+                                <LockOutlined class="site-form-item-icon"/>
+                              </template>
+                            </a-input-password>
+                          </a-form-item>
+                          <a-form-item>
+                            <a-button style="display: flex; align-items: center; justify-content: center;" class="" size="large" @click="login">登录</a-button>
+                          </a-form-item>
+                        </a-form>
+                    </div>
+                    <div class="w3l_form align-self">
+                        <div class="left_grid_info">
+                            <img src="./images/1.png" alt="" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </template>
 
 <style scoped>
-.login {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: -100px;
-  font-weight: bold;
-  font-size: 60px;
-}
-.login-form {
-  width: 350px;
-  max-height: 400px;
-  border-radius: 20px;
-  font-weight: bold;
-}
+@import "css/style.css";
+@import "css/font-awesome.min.css";
+
 </style>
