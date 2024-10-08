@@ -38,6 +38,8 @@ export const useUserStore = defineStore("users", () => {
     },
     // 设置持久化保存
     {
-        persist: true,
+        persist: {
+            storage: sessionStorage
+        }
     }
 )
