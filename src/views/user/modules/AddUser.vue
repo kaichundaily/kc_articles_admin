@@ -1,33 +1,53 @@
 <script setup>
 import { ref, watch } from "vue";
-import { message } from "ant-design-vue";
-import { UploadImage, DeleImg } from '@/api/file.js'
-import { addUser,updateUser } from '@/api/user.js'
 import { addUserRules } from '@/utils/rules.js'
+import { getLevelList } from "@/api/user.js";
+
 const props = defineProps({
   showSubmit: Boolean,
 })
 
 const formRef = ref(null)
-// 1. 图片上传
 
+const mark = ref("")
+const level = ref("")
+const username = ref("")
+const password = ref("")
+const confirmPassword = ref("")
 
-const formData = ref({
-  mark: '',
-  level: '',
-  username: '',
-  password: '',
-  confirmPassword: ''
-})
-
+const levelList = ref([])
 const formRules = addUserRules()
 
+const getLevel = async () => {
+  let mark_grade = {
+    "最高管理": 0,
+    "一级管理": 1,
+    "二级管理": 2,
+    "三级成员": 3
+  }
+  await getLevelList(mark_grade[mark.value]).then((result) => {
+    if (result.code === 200) {
+      levelList.value = result.data
+    }
+  })
+}
 
+watch(mark,(newValue,oldValue) => {
+  if (mark.value !== "") {
+     getLevel()
+  }
+})
 const emit = defineEmits(["closeSubmit"])
 
 
 // 关闭创建
 const closeSubmit = () => {
+  mark.value = ""
+  level.value = ""
+  username.value = ""
+  password.value = ""
+  confirmPassword.value = ""
+  levelList.value = []
   emit("closeSubmit")
 }
 // 退出创建用户
@@ -115,27 +135,28 @@ const closeSubmit = () => {
 <!--      </a-form-item>-->
       <a-form-item name="mark" :rules="formRules.mark">
         <div>身份:</div>
-        <a-select v-model:value="formData.mark">
+        <a-select v-model:value="mark">
           <template #suffixIcon>
             <UserOutlined class="site-form-item-icon" />
           </template>
-          <a-select-option value="管理员">管理员</a-select-option>
-          <a-select-option value="主管">主管</a-select-option>
-          <a-select-option value="组长">组长</a-select-option>
-          <a-select-option value="组员">组员</a-select-option>
+          <a-select-option value="最高管理">最高管理</a-select-option>
+          <a-select-option value="一级管理">一级管理</a-select-option>
+          <a-select-option value="二级管理">二级管理</a-select-option>
+          <a-select-option value="三级成员">三级成员</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item name="level" :rules="formRules.level">
         <div>上级:</div>
-        <a-select v-model:value="formData.level">
+        <a-select v-model:value="level">
           <template #suffixIcon>
             <UserOutlined class="site-form-item-icon" />
           </template>
+          <a-select-option v-for="(index, value) in levelList" :value="value" :key="index">{{ value }}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item name="username" :rules="formRules.username">
         <div>账户:</div>
-        <a-input v-model:value="formData.username" placeholder="请输入账户">
+        <a-input v-model:value="username" placeholder="请输入账户">
           <template #prefix>
             <UserOutlined class="site-form-item-icon" />
           </template>
@@ -143,7 +164,7 @@ const closeSubmit = () => {
       </a-form-item>
       <a-form-item name="password" :rules="formRules.password">
         <div>密码:</div>
-        <a-input-password v-model:value="formData.password" placeholder="请输入密码">
+        <a-input-password v-model:value="password" placeholder="请输入密码">
           <template #prefix>
             <LockOutlined class="site-form-item-icon" />
           </template>
@@ -151,7 +172,7 @@ const closeSubmit = () => {
       </a-form-item>
       <a-form-item name="confirmPassword" :rules="formRules.confirmPassword">
         <div>验证:</div>
-        <a-input-password v-model:value="formData.confirmPassword" placeholder="请再次输入密码">
+        <a-input-password v-model:value="confirmPassword" placeholder="请再次输入密码">
           <template #prefix>
             <LockOutlined class="site-form-item-icon" />
           </template>

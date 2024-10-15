@@ -19,6 +19,14 @@ export const getUsers = async (page, size) =>  {
         }
     })
 }
+// 获取当前等级的level
+export const getLevelList = async (grade) => {
+    return await request.get("/api/getLevelList", {
+        params: {
+            grade
+        }
+    })
+}
 // 添加用户信息
 export const addUser = async (username, password, imgUrl) => {
     return await request.post('/api/addUser', {
