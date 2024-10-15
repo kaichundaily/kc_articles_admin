@@ -1,26 +1,34 @@
 import request from "@/utils/request.js";
 // 登录接口
 export const userLoginService = async ({ username, password }) => {
-    return await request.postForm('/api/login', {
+    return await request.post('/api/login', {
         username,
         password
+    }, {
+        headers: {
+            'Content-Type': 'application/json' // 或者使用 multipart/form-data 如果有文件上传
+        }
     })
 }
 // 获取所有用户信息
-export const getAllUser = async (page, size) =>  {
-    return await request.get('/api/getAllUserInfo', {
+export const getUsers = async (page, size) =>  {
+    return await request.get('/api/getUsers', {
         params: {
-            page: page,
-            size: size
+            page,
+            size
         }
     })
 }
 // 添加用户信息
 export const addUser = async (username, password, imgUrl) => {
-    return await request.postForm('/api/createUser', {
+    return await request.post('/api/addUser', {
         username,
         password,
         avatar: imgUrl
+    },{
+        headers: {
+            'Content-Type': 'application/json' // 或者使用 multipart/form-data 如果有文件上传
+        }
     })
 }
 // 逻辑删除某个用户
@@ -30,9 +38,9 @@ export const deleUser = async (id) => {
     })
 }
 // 修改账户信息
-export const updateUser = async (ID, newImgUrl, newPassword) => {
+export const updateUser = async (id, newImgUrl, newPassword) => {
     return await request.postForm("/api/updateUserInfo", {
-        ID,
+        id,
         imgUrl: newImgUrl,
         password: newPassword
     })

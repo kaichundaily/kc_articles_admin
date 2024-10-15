@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { getAllUser, deleUser,closeUser } from '@/api/user.js'
+import { getUsers, deleUser,closeUser } from '@/api/user.js'
 import { DeleImg } from "@/api/file.js";
 import { message } from "ant-design-vue";
 import { userTableColumns } from "@/utils/columns.js";
@@ -28,8 +28,9 @@ const data = ref([])
 const loading = ref(false)
 const getAllUserInfo = async (page, size) => {
   loading.value = true
-  await getAllUser(page, size).then((result) => {
-    data.value = result.data.data
+  await getUsers(page, size).then((result) => {
+    console.log(result)
+    data.value = result.data.values
     pagination.value.total = result.data.total
   }).catch((error) => {
     message.error(`查询失败:${error}`)
@@ -86,14 +87,16 @@ const cloesDelUser = () => {
 const deleUserInfo = async () => {
   delShow.value = false
   loading.value = true
-  const delResult = await DeleImg(delArticleUrl.value)
-  if (delResult.code !== 200) {
-    message.error("删除失败")
-    delArticleUrl.value = ""
-    loading.value = false
-    return
+  if (delArticleUrl.value !== null) {
+    await DeleImg(delArticleUrl.value).then((result) => {
+      console.log(result)
+    }).catch((err) => {
+      message.error("删除图片失败")
+    }).finally(() => {
+      delArticleUrl.value = ""
+      loading.value = false
+    })
   }
-  delArticleUrl.value = ""
   await deleUser(delID.value).then((reslut) => {
     if (reslut.code === 200) {
       message.success(reslut.message)
@@ -119,7 +122,7 @@ const CloseUser = async (record) => {
     loading.value = false
     return
   }
-  const result = await closeUser(record.ID,record.status === 0 ? 1 : 0)
+  const result = await closeUser(record.ID,record.status === 1 ? 0 : 1)
   if (result.code !== 200) {
     message.error("修改失败")
     return
@@ -148,7 +151,7 @@ const CloseUser = async (record) => {
           <a-avatar v-else shape="square">无</a-avatar>
         </template>
         <template v-else-if="column.key === 'status'">
-          <a-switch @click="CloseUser(record)" :checked="record.status === 0">
+          <a-switch @click="CloseUser(record)" :checked="record.status === 1">
             <template #checkedChildren><check-outlined/></template>
             <template #unCheckedChildren><close-outlined /></template>
           </a-switch>

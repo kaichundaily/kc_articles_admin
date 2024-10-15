@@ -30,7 +30,7 @@ const emit = defineEmits(["changeShowDrawer", "closeSubmit"])
 
 // 退出创建用户
 const changeShowDrawer = async () => {
-  // console.log(formData.value.imgUrl)
+  console.log(props.mode)
   // 如果退出没有提交则删除上传的图片
   switch (props.mode) {
     case "edit":
@@ -59,8 +59,8 @@ const drawerSubmit = async () => {
   switch (props.mode){
     // 修改用户信息
     case 'edit':
-      if (oldImgUrl.value === "" && formData.value.password === "") {
-        message.warning("至少修改头像或者密码其中一项才能提交")
+      if (formData.value.imgUrl === "" && formData.value.password === "") {
+        message.warning("未修改不能提交")
         oldImgUrl.value = ""
         formData.value = {
           imgUrl: '',
@@ -71,7 +71,7 @@ const drawerSubmit = async () => {
         emit('changeShowDrawer')
         break
       }
-      await updateUser(props.record.ID,formData.value.imgUrl, formData.value.password).then((result) => {
+      await updateUser(props.record.id,formData.value.imgUrl, formData.value.password).then((result) => {
         if (result.code === 200) {
           message.success("用户信息修改成功")
         } else {
@@ -153,7 +153,7 @@ const handleUpload = async (options) => {
   const { file, onSuccess, onError, onProgress } = options
   loading.value = true
   await  UploadImage(file).then((result) => {
-    formData.value.imgUrl = result.data.imgUrl
+    formData.value.imgUrl = result.data.url
     message.success(result.message)
   }).catch((error) => {
     message.error(`上传头像失败:${error}`)
