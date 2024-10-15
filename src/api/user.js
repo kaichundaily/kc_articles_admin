@@ -57,7 +57,7 @@ export const updatePassword = async (ID, newPassword) => {
 // 关闭账户
 export const closeUser = async (id, num) => {
     return await request.post("/api/closeUser",{
-        id,
+        uid:id,
         num
     },{
         headers: {

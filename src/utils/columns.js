@@ -1,22 +1,40 @@
 export function userTableColumns() {
     return [
         {
-            title: 'ID',
-            dataIndex: 'ID',
-            key: 'ID',
-            align: 'center'
-        },
-        {
             title: '用户名',
             dataIndex: '用户名',
             key: 'username',
-            align: 'center'
+            align: 'left'
+        },
+        {
+            title: '密码',
+            dataIndex: '密码',
+            key: 'password',
+            align: 'left'
         },
         {
             title: '头像',
             dataIndex: '头像',
             key: 'avatar',
-            align: 'center'
+            align: 'left'
+        },
+        {
+            title: '身份',
+            dataIndex: '身份',
+            key: 'mark',
+            align: 'left'
+        },
+        {
+            title: '权限',
+            dataIndex: '权限',
+            key: 'grade',
+            align: 'left'
+        },
+        {
+            title: '上级',
+            dataIndex: '上级',
+            key: 'level',
+            align: 'left'
         },
         {
           title: '状态',
@@ -24,13 +42,6 @@ export function userTableColumns() {
           key: 'status',
           align: "center"
         },
-        {
-            title: '编辑',
-            dataIndex: '编辑',
-            key: 'edit',
-            align: 'center',
-            scopedSlots: { customRender: 'action' }  // 绑定插槽
-        }
     ]
 }
 

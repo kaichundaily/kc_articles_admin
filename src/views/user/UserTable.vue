@@ -4,8 +4,8 @@ import { getUsers, deleUser,closeUser } from '@/api/user.js'
 import { DeleImg } from "@/api/file.js";
 import { message } from "ant-design-vue";
 import { userTableColumns } from "@/utils/columns.js";
-import { EditOutlined,CheckOutlined,CloseOutlined } from "@ant-design/icons-vue";
-import EditUser from "@/views/user/modules/AddUser.vue";
+import { CheckOutlined, CloseOutlined, PlusOutlined } from "@ant-design/icons-vue";
+import AddUser from "@/views/user/modules/AddUser.vue";
 
 
 // table`s header
@@ -41,76 +41,12 @@ const getAllUserInfo = async (page, size) => {
 
 // 添加用户相关逻辑
 // 调用抽屉的模式
-const showDrawer = ref(false)
-// 设置在打开抽屉时的模式,编辑模式,添加模式
-const mode = ref("")
-const olduserinfo = ref({})
-const openDrawer = (value,record) => {
-  mode.value = value
-  // console.log(typeof record)
-  if (mode.value === "edit") {
-    olduserinfo.value = record
-  }
-  showDrawer.value = true
-}
-
-// 添加用户后再次调用获取用户列表
-const changeSubmit = async () => {
-  showDrawer.value = false
-  await getAllUserInfo(1, 10)
-}
-// 取消添加用户
+const showSubmit = ref(false)
+// 关闭抽屉
 const closeSubmit = () => {
-  olduserinfo.value = {
-    avatar: '',
-    username: '',
-    ID: '',
-  }
-  mode.value = ''
-  showDrawer.value = false
+  showSubmit.value = false
 }
 
-// 2. 删除时弹出确认框
-const delShow = ref(false)
-const delID = ref("")
-const delArticleUrl = ref("")
-const delUser = (id,articleUrl) => {
-  delID.value = id
-  delArticleUrl.value = articleUrl
-  delShow.value = true
-}
-const cloesDelUser = () => {
-  delID.value = ""
-  delShow.value = false
-}
-
-const deleUserInfo = async () => {
-  delShow.value = false
-  loading.value = true
-  if (delArticleUrl.value !== null) {
-    await DeleImg(delArticleUrl.value).then((result) => {
-      console.log(result)
-    }).catch((err) => {
-      message.error("删除图片失败")
-    }).finally(() => {
-      delArticleUrl.value = ""
-      loading.value = false
-    })
-  }
-  await deleUser(delID.value).then((reslut) => {
-    if (reslut.code === 200) {
-      message.success(reslut.message)
-    } else {
-      message.error(reslut.message)
-    }
-  }).catch((err) => {
-    message.error(`删除失败: ${err}`)
-  }).finally(() => {
-    delShow.value = false
-    delID.value = ""
-    getAllUserInfo(pagination.value.current, 10)
-  })
-}
 // 数据初始化
 getAllUserInfo(1, 10)
 
@@ -122,7 +58,7 @@ const CloseUser = async (record) => {
     loading.value = false
     return
   }
-  const result = await closeUser(record.ID,record.status === 1 ? 0 : 1)
+  const result = await closeUser(record.id,record.status === 1 ? 0 : 1)
   if (result.code !== 200) {
     message.error("修改失败")
     return
@@ -140,15 +76,37 @@ const CloseUser = async (record) => {
         :pagination="pagination"
     >
       <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'ID'">
-          {{ record.ID }}
-        </template>
-        <template v-else-if="column.key === 'username'">
+        <template v-if="column.key === 'username'">
           {{ record.username }}
+        </template>
+        <template v-if="column.key === 'password'">
+<!--          <a-input-->
+<!--            v-if="true"-->
+<!--            v-model:value="a"-->
+<!--            type="text"-->
+<!--            size="small"-->
+<!--            :style="{ width: '78px' }"-->
+<!--            @blur=""-->
+<!--            @keyup.enter=""-->
+<!--            placeholder="New passwd"-->
+<!--          />-->
+          <a-tag style="background: #fff; border-style: dashed" @click="">
+            <PlusOutlined />
+            New Passwd
+          </a-tag>
         </template>
         <template v-else-if="column.key === 'avatar'">
           <a-avatar v-if="record.avatar" shape="square" :src="record.avatar" />
           <a-avatar v-else shape="square">无</a-avatar>
+        </template>
+        <template v-else-if="column.key === 'mark'">
+          {{ record.mark }}
+        </template>
+        <template v-else-if="column.key === 'grade'">
+          {{ record.grade }}
+        </template>
+        <template v-else-if="column.key === 'level'">
+          {{ record.level }}
         </template>
         <template v-else-if="column.key === 'status'">
           <a-switch @click="CloseUser(record)" :checked="record.status === 1">
@@ -156,29 +114,18 @@ const CloseUser = async (record) => {
             <template #unCheckedChildren><close-outlined /></template>
           </a-switch>
         </template>
-        <template v-else-if="column.key === 'edit'">
-          <a-button type="text" style="color: dodgerblue" @click="openDrawer('edit',record)">编辑</a-button>
-          <a-button v-if="record.username !== 'admin'" type="text" style="color: dodgerblue" @click="delUser(record.ID, record.avatar)">删除</a-button>
-        </template>
       </template>
     </a-table>
-
-    <edit-user
-        :showDrawer="showDrawer"
-        :mode="mode"
-        :record="olduserinfo"
-        @changeShowDrawer="changeSubmit"
-        @closeSubmit="closeSubmit"
+<!--    添加用户抽屉-->
+    <add-user
+      :showSubmit="showSubmit"
+      @closeSubmit="closeSubmit"
     />
-    <!--  右下角按钮  -->
+<!--    添加用户-->
     <a-float-button
         type="primary"
         class="custom-float-button"
-        @click="openDrawer('add',{
-          avatar: '',
-          username: '',
-          ID: '',
-        })"
+        @click="showSubmit = true"
     >
       <template #icon>
         <EditOutlined class="custom-float-button-icon"/>
@@ -187,16 +134,16 @@ const CloseUser = async (record) => {
   </div>
 
 <!--  删除用户确认框 -->
-  <a-modal
-    :open="delShow"
-    title="确认要删除吗"
-    cancel-text="取消"
-    ok-text="确认"
-    @cancel="cloesDelUser"
-    @ok="deleUserInfo"
-  >
-    <p>不再考虑一下？</p>
-  </a-modal>
+<!--  <a-modal-->
+<!--    :open="delShow"-->
+<!--    title="确认要删除吗"-->
+<!--    cancel-text="取消"-->
+<!--    ok-text="确认"-->
+<!--    @cancel="cloesDelUser"-->
+<!--    @ok="deleUserInfo"-->
+<!--  >-->
+<!--    <p>不再考虑一下？</p>-->
+<!--  </a-modal>-->
 </template>
 
 <style scoped>

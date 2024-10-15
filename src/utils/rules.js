@@ -14,6 +14,18 @@ export function loginFormRules() {
 
 export function addUserRules() {
     return {
+        mark: [
+           {
+                required: true,
+                message: "请选择身份"
+           }
+        ],
+        level: [
+            {
+                required: true,
+                message: "请选择上级"
+            }
+        ],
         username: [
             {
                 required: true,
