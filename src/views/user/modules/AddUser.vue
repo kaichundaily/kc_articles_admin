@@ -1,13 +1,18 @@
 <script setup>
 import { ref, watch } from "vue";
 import { addUserRules } from '@/utils/rules.js'
-import { getLevelList } from "@/api/user.js";
+import { getManagerList, addUser } from "@/api/user.js";
+import { useUserStore } from '@/stores/modules/user.js'
+import { message } from "ant-design-vue";
 
 const props = defineProps({
   showSubmit: Boolean,
 })
 
 const formRef = ref(null)
+
+const userStore = useUserStore()
+const userInfo = userStore.userInfo
 
 const mark = ref("")
 const level = ref("")
@@ -16,28 +21,51 @@ const password = ref("")
 const confirmPassword = ref("")
 
 const levelList = ref([])
+const levels = ref([])
 const formRules = addUserRules()
+const markList = ref([])
+const emit = defineEmits(["closeSubmit"])
 
-const getLevel = async () => {
-  let mark_grade = {
-    "最高管理": 0,
-    "一级管理": 1,
-    "二级管理": 2,
-    "三级成员": 3
-  }
-  await getLevelList(mark_grade[mark.value]).then((result) => {
-    if (result.code === 200) {
-      levelList.value = result.data
-    }
-  })
-}
 
-watch(mark,(newValue,oldValue) => {
-  if (mark.value !== "") {
-     getLevel()
+watch(props,async (newValue,oldValue) => {
+  switch (props.showSubmit) {
+    case true:
+      switch (userInfo.grade) {
+        case 0:
+          markList.value = ["管理员","普通账号"]
+          await getManagerList(userInfo.grade).then((result) => {
+            if (result.code === 200) {
+              levelList.value = result.data
+            } else {
+              message.error(result.message)
+            }
+          }).catch((error) => {
+            console.log(error)
+          })
+          break
+        case 1:
+          markList.value = ["普通账号"]
+          break
+      }
+      break
   }
 })
-const emit = defineEmits(["closeSubmit"])
+
+watch(mark,(newValue,oldValue) => {
+  if (userInfo.grade === 0) {
+    switch (mark.value) {
+      case "管理员":
+        level.value = userInfo.username
+        break
+      case "普通账号":
+        level.value = ""
+        levels.value = levelList.value
+        break
+    }
+  } else {
+    level.value = userInfo.username
+  }
+})
 
 
 // 关闭创建
@@ -48,54 +76,46 @@ const closeSubmit = () => {
   password.value = ""
   confirmPassword.value = ""
   levelList.value = []
+  levels.value = []
   emit("closeSubmit")
 }
-// 退出创建用户
-// const changeShowDrawer = async () => {
-//   let result = await DeleImg(formData.value.imgUrl)
-//   if (result.data === 200) {
-//     formData.value = {
-//       imgUrl: '',
-//       username: '',
-//       password: '',
-//       confirmPassword: ''
-//     }
-//     emit('closeSubmit')
-//     return
-//   }
-//   message.error("删除失败")
-// }
-
-// 1.1 上传前处理
-// const beforeUpload = (file) => {
-//   const isImage = file.type.startsWith('image/')
-//   const isLt2m = file.size / 1024 / 1024 < 2
-//   if (!isImage) {
-//     message.error("上传的必须是图片")
-//   }
-//   if (!isLt2m) {
-//     message.error('上传的图片必须小于2MB')
-//   }
-//   return isImage && isLt2m
-// }
-//
-// const oldImgUrl = ref("")
-// // 1.2 上传
-// const handleUpload = async (options) => {
-//   if (formData.value.imgUrl !== "") {
-//     oldImgUrl.value = formData.value.imgUrl
-//   }
-//   const { file, onSuccess, onError, onProgress } = options
-//   loading.value = true
-//   await  UploadImage(file).then((result) => {
-//     formData.value.imgUrl = result.data.url
-//     message.success(result.message)
-//   }).catch((error) => {
-//     message.error(`上传头像失败:${error}`)
-//   }).finally(() => {
-//     loading.value = false
-//   })
-// }
+// 提交创建用户
+const submit = async () => {
+  if (username.value === "") {
+    message.error("请填写用户名")
+    return
+  }
+  if (password.value === "") {
+    message.error("请填写密码")
+    return
+  }
+  if (password.value !== confirmPassword.value) {
+    message.error("两次填写的密码不一致")
+    return
+  }
+  if (mark.value === "") {
+    message.error("请选择身份")
+    return
+  }
+  if (level.value === "") {
+    message.error("请选择上级")
+    return
+  }
+  await addUser({
+    "username": username.value,
+    "password": password.value,
+    "mark": mark.value,
+    "grade": mark.value === "管理员" ? 1 : 2,
+    "level": level.value,
+    "status": 1
+  }).then((result) => {
+    result.code === 200 ? message.success(result.message) : message.error(result.message)
+  }).catch((error) => {
+    message.error(error)
+  }).finally(() => {
+    closeSubmit()
+  })
+}
 </script>
 
 <template>
@@ -107,42 +127,19 @@ const closeSubmit = () => {
     cancel-text="取消添加"
     ok-text="提交"
     @cancel="closeSubmit"
-    @ok="closeSubmit"
+    @ok="submit"
   >
     <a-form
       :rules="formRules"
-      :model="formData"
       ref="formRef"
     >
-<!--      <a-form-item>-->
-<!--        <div>上传头像:</div>-->
-<!--        <a-upload-->
-<!--            v-model:file-list="fileList"-->
-<!--            name="file"-->
-<!--            list-type="picture-card"-->
-<!--            class="avatar-uploader"-->
-<!--            :show-upload-list="false"-->
-<!--            :before-upload="beforeUpload"-->
-<!--            :custom-request="handleUpload"-->
-<!--        >-->
-<!--          <img v-if="formData.imgUrl" :src="formData.imgUrl" alt="avatar" class="uploaded-img" />-->
-<!--          <div v-else class="upload-placeholder">-->
-<!--            <loading-outlined v-if="loading"></loading-outlined>-->
-<!--            <plus-outlined v-else></plus-outlined>-->
-<!--            <div class="ant-upload-text">Upload</div>-->
-<!--          </div>-->
-<!--        </a-upload>-->
-<!--      </a-form-item>-->
       <a-form-item name="mark" :rules="formRules.mark">
         <div>身份:</div>
         <a-select v-model:value="mark">
           <template #suffixIcon>
             <UserOutlined class="site-form-item-icon" />
           </template>
-          <a-select-option value="最高管理">最高管理</a-select-option>
-          <a-select-option value="一级管理">一级管理</a-select-option>
-          <a-select-option value="二级管理">二级管理</a-select-option>
-          <a-select-option value="三级成员">三级成员</a-select-option>
+          <a-select-option v-for="(value, index) in markList" :value="value" :key="index">{{ value }}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item name="level" :rules="formRules.level">
@@ -151,7 +148,7 @@ const closeSubmit = () => {
           <template #suffixIcon>
             <UserOutlined class="site-form-item-icon" />
           </template>
-          <a-select-option v-for="(index, value) in levelList" :value="value" :key="index">{{ value }}</a-select-option>
+          <a-select-option v-for="(value, index) in levels" :value="value" :key="index">{{ value }}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item name="username" :rules="formRules.username">

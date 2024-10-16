@@ -15,15 +15,22 @@ export function loginFormRules() {
 export function addUserRules() {
     return {
         mark: [
-           {
+            {
                 required: true,
                 message: "请选择身份"
-           }
+            },
+            {
+                trigger: 'blur'
+            }
+
         ],
         level: [
             {
                 required: true,
                 message: "请选择上级"
+            },
+            {
+                trigger: 'blur'
             }
         ],
         username: [

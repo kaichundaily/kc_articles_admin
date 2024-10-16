@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { getUsers, deleUser,closeUser } from '@/api/user.js'
-import { DeleImg } from "@/api/file.js";
+import { getUsers, closeUser } from '@/api/user.js'
 import { message } from "ant-design-vue";
 import { userTableColumns } from "@/utils/columns.js";
 import { CheckOutlined, CloseOutlined, PlusOutlined } from "@ant-design/icons-vue";
@@ -29,7 +28,6 @@ const loading = ref(false)
 const getAllUserInfo = async (page, size) => {
   loading.value = true
   await getUsers(page, size).then((result) => {
-    console.log(result)
     data.value = result.data.values
     pagination.value.total = result.data.total
   }).catch((error) => {
@@ -45,6 +43,7 @@ const showSubmit = ref(false)
 // 关闭抽屉
 const closeSubmit = () => {
   showSubmit.value = false
+  getAllUserInfo(pagination.value.current, 10)
 }
 
 // 数据初始化

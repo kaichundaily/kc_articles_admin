@@ -24,15 +24,16 @@ const login = async () => {
       userStore.setUserInfo({
         id: result.data.id,
         username: result.data.username,
-        avatar: result.data.avatar
+        avatar: result.data.avatar,
+        grade: result.data.grade
       })
       message.success("登录成功")
       router.push("/")
     } else {
       message.error(result.message)
     }
-  }).catch(() => {
-    message.error(`登录失败`)
+  }).catch((error) => {
+    message.error(error.message)
   })
 }
 
