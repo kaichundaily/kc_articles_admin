@@ -39,6 +39,7 @@ const handleOk = () => {
 
 const reviseShow = ref(false)
 const formRules = revisePasswordRules()
+const revRef = ref()
 const formData = ref({
   oldPassword: "",
   newPassword: "",
@@ -49,6 +50,7 @@ const formData = ref({
 // 提交修改
 
 const submitRevise = async () => {
+  revRef.value.validate()
   // console.log("模拟提交")
   if (formData.value.newPassword === formData.value.oldPassword) {
     message.warning("新旧密码不能一样")
@@ -145,10 +147,11 @@ const closeSubmit = () => {
         <a-form
           :rules="formRules"
           :model="formData"
+          ref="revRef"
         >
           <a-form-item name="oldPassword" :rules="formRules.oldPassword">
             <div>旧密码:</div>
-            <a-input-password :value="formData.oldPassword" placeholder="请输入旧密码">
+            <a-input-password v-model:value="formData.oldPassword" placeholder="请输入旧密码">
               <template #prefix>
                 <LockOutlined  class="site-form-item-icon"/>
               </template>
@@ -156,7 +159,7 @@ const closeSubmit = () => {
           </a-form-item>
           <a-form-item name="newPassword" :rules="formRules.newPassword">
             <div>新密码:</div>
-            <a-input-password :value="formData.newPassword" placeholder="请输入新密码">
+            <a-input-password v-model:value="formData.newPassword" placeholder="请输入新密码">
               <template #prefix>
                 <LockOutlined  class="site-form-item-icon"/>
               </template>
@@ -164,7 +167,7 @@ const closeSubmit = () => {
           </a-form-item>
           <a-form-item name="verifyPassword" :rules="formRules.verifyPassword">
             <div>新密码:</div>
-            <a-input-password :value="formData.verifyPassword" placeholder="请再次输入新密码">
+            <a-input-password v-model:value="formData.verifyPassword" placeholder="请再次输入新密码">
               <template #prefix>
                 <LockOutlined  class="site-form-item-icon"/>
               </template>

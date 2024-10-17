@@ -31,9 +31,13 @@ export const addUser = async (data) => {
 
 // 修改密码
 export const updatePassword = async (ID, newPassword) => {
-    return await request.postForm("/api/UploadPassword", {
+    return await request.post("/api/uploadPasswd", {
         id: ID,
         password: newPassword
+    },{
+        headers: {
+            'Content-Type': 'application/json' // 或者使用 multipart/form-data 如果有文件上传
+        }
     })
 }
 

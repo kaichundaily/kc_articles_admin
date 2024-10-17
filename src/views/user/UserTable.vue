@@ -3,8 +3,10 @@ import { ref } from "vue";
 import { getUsers, closeUser } from '@/api/user.js'
 import { message } from "ant-design-vue";
 import { userTableColumns } from "@/utils/columns.js";
-import { CheckOutlined, CloseOutlined, PlusOutlined } from "@ant-design/icons-vue";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons-vue";
 import AddUser from "@/views/user/modules/AddUser.vue";
+import { updatePassword } from "@/api/user.js";
+import { revisePasswordRules } from "@/utils/rules.js"
 
 
 // table`s header
@@ -64,6 +66,59 @@ const CloseUser = async (record) => {
   }
   getAllUserInfo(pagination.value.current, 10)
 }
+
+// 修改密码
+const uid = ref("")
+const formData = ref({
+  newPassword: "",
+  refPassword: ""
+})
+const isShow = ref(false)
+
+const oldPasswd = ref("")
+
+const rules = revisePasswordRules()
+const reRef = ref()
+const openShow = (id, passwd) => {
+  isShow.value = true
+  uid.value = id
+  oldPasswd.value = passwd
+}
+
+const closeShow = () => {
+  isShow.value = false
+  formData.value = {
+    newPassword: "",
+    refPassword: ""
+  }
+  uid.value = ""
+  oldPasswd.value = ""
+}
+
+const submitNewPasswd = async () => {
+  reRef.value.validate()
+  if (formData.value.newPassword !== formData.value.refPassword) {
+    message.error("两次输入密码不一致")
+    closeShow()
+    return
+  }
+  if (formData.value.newPassword === oldPasswd.value) {
+    message.error("新旧密码一致")
+    closeShow()
+    return
+  }
+  await updatePassword(uid.value, formData.value.newPassword).then((result) => {
+    if (result.code === 200) {
+      message.success(result.message)
+    } else {
+      message.error(result.message)
+    }
+  }).catch((error) => {
+    message.error(error.toString())
+  }).finally(() => {
+    closeShow()
+  })
+}
 </script>
 
 <template>
@@ -79,20 +134,9 @@ const CloseUser = async (record) => {
           {{ record.username }}
         </template>
         <template v-if="column.key === 'password'">
-<!--          <a-input-->
-<!--            v-if="true"-->
-<!--            v-model:value="a"-->
-<!--            type="text"-->
-<!--            size="small"-->
-<!--            :style="{ width: '78px' }"-->
-<!--            @blur=""-->
-<!--            @keyup.enter=""-->
-<!--            placeholder="New passwd"-->
-<!--          />-->
-          <a-tag style="background: #fff; border-style: dashed" @click="">
-            <PlusOutlined />
-            New Passwd
-          </a-tag>
+          <a-button type="primary" @click="openShow(record.id, record)">
+            修改密码
+          </a-button>
         </template>
         <template v-else-if="column.key === 'avatar'">
           <a-avatar v-if="record.avatar" shape="square" :src="record.avatar" />
@@ -131,18 +175,35 @@ const CloseUser = async (record) => {
       </template>
     </a-float-button>
   </div>
-
-<!--  删除用户确认框 -->
-<!--  <a-modal-->
-<!--    :open="delShow"-->
-<!--    title="确认要删除吗"-->
-<!--    cancel-text="取消"-->
-<!--    ok-text="确认"-->
-<!--    @cancel="cloesDelUser"-->
-<!--    @ok="deleUserInfo"-->
-<!--  >-->
-<!--    <p>不再考虑一下？</p>-->
-<!--  </a-modal>-->
+  <a-modal
+    :open="isShow"
+    title="修改密码"
+    cancel-text="取消"
+    ok-text="提交"
+    @cancel="closeShow"
+    @ok="submitNewPasswd"
+  >
+    <a-form
+      ref="reRef"
+      :rules="rules"
+      :model="formData"
+    >
+      <a-form-item name="newPassword" :rules="rules.newPassword">
+        <a-input-password v-model:value="formData.newPassword" placeholder="请输入密码">
+          <template #prefix>
+            <LockOutlined class="site-form-item-icon" />
+          </template>
+        </a-input-password>
+      </a-form-item>
+      <a-form-item name="verifyPassword" :rules="rules.verifyPassword">
+        <a-input-password v-model:value="formData.refPassword" placeholder="请再次输入密码">
+          <template #prefix>
+            <LockOutlined class="site-form-item-icon" />
+          </template>
+        </a-input-password>
+      </a-form-item>
+    </a-form>
+  </a-modal>
 </template>
 
 <style scoped>

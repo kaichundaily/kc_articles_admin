@@ -17,7 +17,8 @@ export function addUserRules() {
         mark: [
             {
                 required: true,
-                message: "请选择身份"
+                message: "请选择身份",
+                trigger: 'change'
             },
             {
                 trigger: 'blur'
@@ -27,7 +28,8 @@ export function addUserRules() {
         level: [
             {
                 required: true,
-                message: "请选择上级"
+                message: "请选择上级",
+                trigger: 'change'
             },
             {
                 trigger: 'blur'
@@ -36,7 +38,8 @@ export function addUserRules() {
         username: [
             {
                 required: true,
-                message: "请输入用户名"
+                message: "请输入用户名",
+                trigger: 'change'
             },
             {
                 pattern: /^[a-zA-Z0-9]{3,10}$/,
@@ -47,7 +50,8 @@ export function addUserRules() {
         password: [
             {
                 required: true,
-                message: "请输入密码"
+                message: "请输入密码",
+                trigger: 'change'
             },
             {
                 min: 6, max: 16, message: "密码最小6位,最大16位", trigger: 'blur'
@@ -56,7 +60,8 @@ export function addUserRules() {
         confirmPassword: [
             {
                 required: true,
-                message: "请输入密码"
+                message: "请输入密码",
+                trigger: 'change'
             },
             {
                 min: 6, max: 16, message: "密码最小6位,最大16位", trigger: 'blur'
@@ -71,7 +76,8 @@ export function revisePasswordRules() {
         oldPassword: [
             {
                 required: true,
-                message: "请输入旧密码"
+                message: "请输入旧密码",
+                trigger: "change"
             },
             {
                 min: 6,
@@ -83,7 +89,8 @@ export function revisePasswordRules() {
         newPassword: [
             {
                 required: true,
-                message: "请输入新密码"
+                message: "请输入新密码",
+                trigger: "change"
             },
             {
                 min: 6,
@@ -95,7 +102,8 @@ export function revisePasswordRules() {
         verifyPassword: [
             {
                 required: true,
-                message: "请再次输入新密码"
+                message: "请再次输入新密码",
+                trigger: "change"
             },
             {
                 min: 6,
