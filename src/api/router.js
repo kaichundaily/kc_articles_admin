@@ -1,7 +1,7 @@
 import request from "@/utils/request.js";
 
 export const getRouters = async ( id ) => {
-    await request.post("/api/getRouter", {
+    return await request.post("/api/getRouter", {
         id
     },{
         headers: {

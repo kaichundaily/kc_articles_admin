@@ -8,7 +8,7 @@ import { message } from "ant-design-vue";
 const routes = [
   {
     path: '/',
-    // name: 'home',
+    name: 'home',
     redirect: '/dashboard',
     component: Layout,
     meta: {
@@ -25,7 +25,7 @@ const routes = [
         }
       },
       {
-        path: '',
+        path: '/user',
         meta: {
           title: '用户',
           key: '2',
@@ -43,7 +43,7 @@ const routes = [
         ]
       },
       {
-        path: '',
+        path: '/article',
         meta: {
           title: '文章',
           key: '3',
