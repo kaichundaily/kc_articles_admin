@@ -1,15 +1,13 @@
-export function convertToDynamicImport(routerList) {
-    return routerList.map(route => {
-        // const { path, name, redirect, component, children } = route
-        let  routerConfig = {
-            path: route.path,
-            name: route.meta.title,
-            meta: route.meta,
-            component: () => import(/* @vite-ignore */ route.component),
+import map from "@/router/routes.js";
+
+export const convertToDynamicImport = (routerList) => {
+    let routers = new Map()
+    routerList.forEach((item, index) => {
+        if (item.level === "one") {
+            routers.set(item.name, map.get(item.name))
+        } else {
+            routers.get(item.type).children.push(map.get(item.name))
         }
-        if (route.children && route.children.length > 0) {
-            routerConfig.children = convertToDynamicImport(route.children)
-        }
-        return routerConfig
     })
+    return routers
 }

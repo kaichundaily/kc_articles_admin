@@ -12,7 +12,7 @@ const route = useRoute();
 
 // 菜单列表初始化
 const items = ref([])
-
+const routerList = ref({})
 // 图标列表
 const iconMap = ref({
   HomeOutlined,
@@ -20,14 +20,19 @@ const iconMap = ref({
   SnippetsOutlined
 })
 // 获取当前的路由菜单
-const routers = router.options.routes
+// const routers = router.options.routes
+const getRouterList = () => {
+  routerList.value = router.options.routes
+  console.log(routerList.value)
+}
+getRouterList()
 // 图标的字符转化
 const getIconComponent = (iconName) => {
   return iconName ? h(iconMap.value[iconName]) : null
 }
 // 路由转菜单
-const  processRouters = (routers) => {
-  return routers.map(rou => {
+const  processRouters = (routes) => {
+  return routes.map(rou => {
     if (rou.path === '/') {
       return rou.children.map(child => {
         const menuItem = {
@@ -52,7 +57,7 @@ const  processRouters = (routers) => {
   }).filter(Boolean).flat()
 }
 // 获得菜单列表
-items.value = processRouters(routers)
+items.value = processRouters(routerList.value)
 
 // 根据 key 查找菜单项
 const findMenuItemByKey = (key, items) => {
