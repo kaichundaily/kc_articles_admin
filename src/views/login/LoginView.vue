@@ -46,12 +46,12 @@ const login = async () => {
       avatar: result.data.avatar,
       grade: result.data.grade
     })
-    const res = await getRouters(result.data.id)
-    const routes = convertToDynamicImport(res.data)
-    routes.forEach((route) => {
-      console.log(route)
-      router.addRoute('Layout', route)
-    })
+    // const res = await getRouters(result.data.id)
+    // const routes = convertToDynamicImport(res.data)
+    // routes.forEach((route) => {
+    //   console.log(route)
+    //   router.addRoute('Layout', route)
+    // })
     message.success("登陆成功")
     await router.push("/")
   }
