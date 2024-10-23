@@ -20,7 +20,8 @@ userMap.set('userTable', {
     meta: {
         title: '用户列表',
         key: '2.1',
-        icon: ''
+        icon: '',
+        level: 'user'
     }
 })
 

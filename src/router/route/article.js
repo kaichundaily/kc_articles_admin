@@ -20,7 +20,8 @@ articleMap.set('articleTable', {
     meta: {
         title: '文章列表',
         key: '3.1',
-        icon: ''
+        icon: '',
+        level: 'article'
     }
 })
 

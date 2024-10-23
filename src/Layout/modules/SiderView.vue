@@ -7,6 +7,8 @@ import {
 import Logo from "@/assets/logo.jpg"
 import { h, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router"; // 引入 useRouter
+import { routeSort, processRouteList } from "@/Layout/js/utils.js";
+
 const router = useRouter(); // 获取 router 实例
 const route = useRoute();
 
@@ -22,7 +24,7 @@ const iconMap = ref({
 // 获取当前的路由菜单
 // const routers = router.options.routes
 const getRouterList = () => {
-  routerList.value = router.options.routes
+  routerList.value = processRouteList(routeSort(router.getRoutes()))
   console.log(routerList.value)
 }
 getRouterList()
@@ -31,33 +33,33 @@ const getIconComponent = (iconName) => {
   return iconName ? h(iconMap.value[iconName]) : null
 }
 // 路由转菜单
-const  processRouters = (routes) => {
-  return routes.map(rou => {
-    if (rou.path === '/') {
-      return rou.children.map(child => {
-        const menuItem = {
-          label: child.meta.title,
-          key: child.meta.key,
-          icon: getIconComponent(child.meta.icon),
-          route: child.path
-        }
-
-        if (child.children) {
-          menuItem.children = child.children.map(subChild => ({
-            label: subChild.meta.title,
-            key: subChild.meta.key,
-            route: subChild.path
-          }))
-          delete menuItem.route
-        }
-        return menuItem
-      })
+const  routeToMenus = (routes) => {
+  let rouList = []
+  routes.forEach(rou => {
+    const menuItem = {
+      key: rou.meta.key,
+      label: rou.meta.title,
+      route: rou.path,
+      icon: getIconComponent(rou.meta.icon),
+      children: []
     }
-    return null
-  }).filter(Boolean).flat()
+    if (rou.children && rou.children.length > 0) {
+      rou.children.forEach(child => {
+        menuItem.children.push({
+          key: child.meta.key,
+          label: child.meta.title,
+          route: child.path,
+        })
+      })
+    } else {
+      delete menuItem.children
+    }
+    rouList.push(menuItem)
+  })
+  return rouList
 }
 // 获得菜单列表
-items.value = processRouters(routerList.value)
+items.value = routeToMenus(routerList.value)
 
 // 根据 key 查找菜单项
 const findMenuItemByKey = (key, items) => {
