@@ -5,7 +5,7 @@ import {
   SnippetsOutlined
 } from "@ant-design/icons-vue";
 import Logo from "@/assets/logo.jpg"
-import { h, ref, watch } from "vue";
+import { h, ref, watch} from "vue";
 import { useRouter, useRoute } from "vue-router"; // 引入 useRouter
 import { routeSort, processRouteList } from "@/Layout/js/utils.js";
 
@@ -25,9 +25,7 @@ const iconMap = ref({
 // const routers = router.options.routes
 const getRouterList = () => {
   routerList.value = processRouteList(routeSort(router.getRoutes()))
-  console.log(routerList.value)
 }
-getRouterList()
 // 图标的字符转化
 const getIconComponent = (iconName) => {
   return iconName ? h(iconMap.value[iconName]) : null
@@ -58,9 +56,9 @@ const  routeToMenus = (routes) => {
   })
   return rouList
 }
-// 获得菜单列表
+getRouterList()
 items.value = routeToMenus(routerList.value)
-
+// 获得菜单列表
 // 根据 key 查找菜单项
 const findMenuItemByKey = (key, items) => {
   for (const item of items) {

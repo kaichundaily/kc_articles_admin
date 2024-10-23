@@ -1,5 +1,4 @@
 import map from "@/router/routes.js";
-
 export const convertToDynamicImport = (routerList) => {
     let routers = new Map()
     routerList.forEach((item, index) => {

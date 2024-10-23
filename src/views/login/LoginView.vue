@@ -7,8 +7,10 @@ import { userLoginService } from '@/api/user.js';
 import { message } from "ant-design-vue";
 import { getRouters } from "@/api/router.js";
 import { convertToDynamicImport } from "@/utils/addRouter.js";
-const rules = loginFormRules()
+import { routerStore } from "@/stores/index.js";
 
+const rules = loginFormRules()
+const rouStore = routerStore()
 const formModel = ref({
   username: '',
   password: ''
@@ -20,23 +22,6 @@ const router = useRouter()
 
 const login = async () => {
   await form.value.validate()
-  // await userLoginService(formModel.value).then((result) => {
-  //   if (result.code === 200) {
-  //     userStore.setToken(result.data.token)
-  //     userStore.setUserInfo({
-  //       id: result.data.id,
-  //       username: result.data.username,
-  //       avatar: result.data.avatar,
-  //       grade: result.data.grade
-  //     })
-  //     message.success("登录成功")
-  //     router.push("/")
-  //   } else {
-  //     message.error(result.message)
-  //   }
-  // }).catch((error) => {
-  //   message.error(error.message)
-  // })
   const result = await userLoginService(formModel.value)
   if (result.code === 200) {
     userStore.setToken(result.data.token)
@@ -48,8 +33,8 @@ const login = async () => {
     })
     const res = await getRouters(result.data.id)
     const routes = convertToDynamicImport(res.data)
+    rouStore.setRouterList(res)
     routes.forEach((route) => {
-      console.log(route)
       router.addRoute('Layout', route)
     })
     message.success("登陆成功")

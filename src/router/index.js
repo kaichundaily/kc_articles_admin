@@ -15,51 +15,16 @@ const routes = [
       title: '系统'
     },
     children: [
-      // {
-      //   path: '/dashboard',
-      //   component: () => import('@/views/dashboard/DashboardView.vue'),
-      //   meta: {
-      //     title: 'Home',
-      //     key: '1',
-      //     icon: 'HomeOutlined'
-      //   }
-      // },
-      // {
-      //   path: '/user',
-      //   meta: {
-      //     title: '用户',
-      //     key: '2',
-      //     icon: 'UserOutlined'
-      //   },
-      //   children: [
-      //     {
-      //       path: '/user/userTable',
-      //       component: () => import('@/views/user/UserTable.vue'),
-      //       meta: {
-      //         title: '用户列表',
-      //         key: '2.1',
-      //       }
-      //     }
-      //   ]
-      // },
-      // {
-      //   path: '/article',
-      //   meta: {
-      //     title: '文章',
-      //     key: '3',
-      //     icon: 'SnippetsOutlined'
-      //   },
-      //   children: [
-      //     {
-      //       path: '/article/articleTable',
-      //       component: () => import('@/views/article/ArticleTable.vue'),
-      //       meta: {
-      //         title: '文章列表',
-      //         key: '3.1',
-      //       }
-      //     }
-      //   ]
-      // }
+      {
+        path: '/dashboard',
+        name: 'dashboard',
+        component: () => import('@/views/dashboard/DashboardView.vue'),
+        meta: {
+            title: 'Home',
+            key: '1',
+            icon: 'HomeOutlined'
+        }
+      }
     ]
   },
   {
