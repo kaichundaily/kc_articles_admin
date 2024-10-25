@@ -33,11 +33,6 @@ const login = async () => {
     const res = await getRouters(result.data.id)
     console.log(res.data)
     menuStore.setMenuList(res.data)
-    const routes = convertToDynamicImport(res.data)
-    routes.forEach((route) => {
-      router.addRoute('Layout', route)
-    })
-    routerStore.commitRouter(true)
     message.success("登陆成功")
     await router.push("/")
   }
