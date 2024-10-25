@@ -1,25 +1,17 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref } from 'vue'
 
-export const routerStore = defineStore("router", () => {
-        const routerList = ref([])
-        const setRouterList = (newRouterList) => {
-            routerList.value = newRouterList
-        }
 
-        const removeRouterList = () => {
-            routerList.value = []
+export const useRouterStore = defineStore("router", () => {
+        // 1. token相关内容
+        const  isAddRouter = ref(false)
+        const commitRouter = (newRouter) => {
+            isAddRouter.value = newRouter
         }
 
         return {
-            routerList,
-            setRouterList,
-            removeRouterList
-        }
-    },
-    {
-        persist: {
-            storage: sessionStorage
+            isAddRouter,
+            commitRouter,
         }
     }
 )
