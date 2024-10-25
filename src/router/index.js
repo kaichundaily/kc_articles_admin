@@ -1,6 +1,5 @@
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import Login from '@/views/login/LoginView.vue'
-import Error from '@/views/error/ErrorView.vue'
 import Layout from '@/Layout/MainLayout.vue'
 
 const routes = [
@@ -32,13 +31,12 @@ const routes = [
   },
   {
     path: '/:pathMatch(.*)*',
-    component: Error,
-    name: 'error'
+    component:() => import('@/views/error/ErrorView.vue'),
   },
 ]
 
 const router = createRouter({
-  history: import.meta.env.BASE_URL === 'development' ? createWebHashHistory() : createWebHistory(),
+  history: import.meta.env.MODE === 'development' ? createWebHashHistory() : createWebHistory(),
   routes
 })
 

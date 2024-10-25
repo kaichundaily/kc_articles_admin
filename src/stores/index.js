@@ -6,3 +6,4 @@ pinia.use(createPersistedState())
 export default pinia
 export * from './modules/router.js'
 export * from './modules/user.js'
+export * from './modules/menu.js'

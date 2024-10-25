@@ -1,7 +1,7 @@
 <script setup>
 import { loginFormRules } from '@/utils/rules.js';
 import { ref } from "vue";
-import {useRouterStore, useUserStore} from "@/stores/index.js";
+import { useMenuStore, useRouterStore, useUserStore } from "@/stores/index.js";
 import { useRouter } from "vue-router";
 import { userLoginService } from '@/api/user.js';
 import { message } from "ant-design-vue";
@@ -16,6 +16,7 @@ const formModel = ref({
 const form = ref()
 const routerStore = useRouterStore()
 const userStore = useUserStore()
+const menuStore = useMenuStore()
 const router = useRouter()
 
 const login = async () => {
@@ -31,6 +32,7 @@ const login = async () => {
     })
     const res = await getRouters(result.data.id)
     console.log(res.data)
+    menuStore.setMenuList(res.data)
     const routes = convertToDynamicImport(res.data)
     routes.forEach((route) => {
       router.addRoute('Layout', route)

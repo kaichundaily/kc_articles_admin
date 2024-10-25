@@ -1,6 +1,6 @@
 <script setup>
 import { useRouter } from "vue-router";
-import { useUserStore } from "@/stores/index.js";
+import { useMenuStore, useUserStore } from "@/stores/index.js";
 import { ref } from "vue";
 import { revisePasswordRules } from "@/utils/rules.js";
 import { message } from "ant-design-vue";
@@ -8,6 +8,7 @@ import { updatePassword } from "@/api/user.js";
 
 const router = useRouter()
 const useStore = useUserStore()
+const mentStore = useMenuStore()
 
 // 侧边栏伸缩icon相关
 const props = defineProps({
@@ -21,6 +22,7 @@ const changeCollapsed = () => {
 
 const logout = async () => {
   await useStore.removeToken()
+  await mentStore.removeMenuList()
   await router.push('/login')
 }
 //提示框相关

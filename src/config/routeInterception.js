@@ -1,33 +1,37 @@
 import router from "@/router/index.js";
-import { useUserStore, useRouterStore } from "@/stores/index.js";
+import { useUserStore, useRouterStore, useMenuStore } from "@/stores/index.js";
 // import { getRouters } from "@/api/router.js";
 // import { convertToDynamicImport } from "@/utils/addRouter.js";
 import { message } from "ant-design-vue";
-import { getRouters } from "@/api/router.js";
 import { convertToDynamicImport } from "@/utils/addRouter.js";
 
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
   const routerStore = useRouterStore()
-  console.log(!userStore.token)
-  if (!userStore.token && to.path !== '/login') {
-    console.log("被触发1")
-    message.warning('请先登录')
-    return next('/login')
-  } else {
-    console.log("被触发2")
-    if (routerStore.isAddRouter) {
-      return next({ ...to, replace: true })
+  const menuStore = useMenuStore()
+  if (userStore.token) {
+    if (to.path === "/login") {
+      message.warning("当前已登陆")
+      next("/dashboard")
     } else {
-      if (!routerStore.isAddRouter) {
-      const res = getRouters(userStore.userInfo.id)
-      const routes = convertToDynamicImport(res.data)
-      routes.forEach((route) => {
-        router.addRoute('Layout', route)
-      })
+      if (routerStore.isAddRouter) {
+        next()
+      } else {
+        const menus =  menuStore.menuList
+        const routes = convertToDynamicImport(menus)
+        routes.forEach((route) => {
+          router.addRoute('Layout', route)
+        })
+        routerStore.commitRouter(true)
+        next({...to, replace: true})
       }
-      routerStore.commitRouter(true)
-      return next({ ...to, replace: true })
+    }
+  } else {
+    if (to.path === "/login") {
+      next()
+    } else {
+      message.warning("请先登陆")
+      next("/login")
     }
   }
 })
