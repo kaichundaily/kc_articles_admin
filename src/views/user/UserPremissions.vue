@@ -23,18 +23,20 @@ const onLoadData = async (treeNode) => {
 }
 
 const treeColHeight = () => {
-  return `calc(90vh -84px)`
+  return 90 / 100 * window.innerHeight - 96 + 'px'
 }
 </script>
 
 <template>
-  <a-row>
-    <a-col :span="4" class="title"></a-col>
-  </a-row>
-  <a-row>
-    <!--  TODO  -->
-    <a-col :span="4" :style="{height: treeColHeight}"></a-col>
-  </a-row>
+  <div style="height: 100%; width: 100%; background-color: #2b88d1">
+    <a-row>
+      <a-col :span="4" class="title"></a-col>
+    </a-row>
+    <a-row>
+      <!--  TODO 等待实现动态监听  -->
+      <a-col :span="4" :style="{ height: treeColHeight(),backgroundColor: 'red' }"></a-col>
+    </a-row>
+  </div>
 </template>
 
 <style scoped>
