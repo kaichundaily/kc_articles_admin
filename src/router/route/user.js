@@ -25,4 +25,16 @@ userMap.set('userTable', {
     }
 })
 
+userMap.set('userPremissions', {
+    path: '/user/userPremissions',
+    name: 'userPremissions',
+    component: () => import('@/views/user/UserPremissions.vue'),
+    meta: {
+        title: '用户权限',
+        key: '2.2',
+        icon: '',
+        level: 'user'
+    }
+})
+
 export default userMap
