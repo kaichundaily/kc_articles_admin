@@ -22,26 +22,46 @@ const onLoadData = async (treeNode) => {
   return
 }
 
-const treeColHeight = () => {
-  return 90 / 100 * window.innerHeight - 96 + 'px'
+const treeColHeight = (num) => {
+  return num / 100 * window.innerHeight - 106 + 'px'
+}
+const tableColHeight = (num) => {
+  return num / 100 * window.innerHeight - 96 + 'px'
 }
 </script>
 
 <template>
-  <div style="height: 100%; width: 100%; background-color: #2b88d1">
-    <a-row>
-      <a-col :span="4" class="title"></a-col>
+  <div style="height: 100%; width: 100%;">
+    <a-row :gutter="[25, 0]">
+      <a-col :span="4">
+        <a-row>
+          <a-col :span="24" class="title">
+            <span>title</span>
+          </a-col>
+          <a-col :span="24" :style="{ height: treeColHeight(90),backgroundColor: 'rgb(255, 255, 255)', margin: '10px 0px 0px 0px', padding: '20px', borderRadius: '15px' }">
+            <a-tree
+                v-model:expandedKeys="expandedKeys"
+                v-model:selectedKeys="selectedKeys"
+                :load-data="onLoadData"
+                :tree-data="treeData"
+            />
+          </a-col>
+        </a-row>
+      </a-col>
+      <a-col :span="20" :style="{ height: tableColHeight(100), backgroundColor: 'rgb(255, 255, 255)', borderRadius: '15px', padding: '20px' }">
+        <span>Table</span>
+      </a-col>
     </a-row>
     <a-row>
-      <!--  TODO 等待实现动态监听  -->
-      <a-col :span="4" :style="{ height: treeColHeight(),backgroundColor: 'red' }"></a-col>
     </a-row>
   </div>
 </template>
 
 <style scoped>
 .title {
-  background-color: #b57aba;
+  background-color: rgb(255, 255, 255);
   height: 10vh;
+  border-radius: 15px;
+  padding: 20px;
 }
 </style>
