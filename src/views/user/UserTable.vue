@@ -128,6 +128,7 @@ const submitNewPasswd = async () => {
         :data-source="data"
         :loading="loading"
         :pagination="pagination"
+        :bordered="true"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'username'">

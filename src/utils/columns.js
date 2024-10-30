@@ -79,3 +79,32 @@ export function articleTableColumns() {
         }
     ]
 }
+
+export function userRouterTableColumns() {
+    return [
+        {
+            title: 'ID',
+            dataIndex: 'ID',
+            key: 'id',
+            align: 'center'
+        },
+        {
+            title: '类型',
+            dataIndex: '类型',
+            key: 'type',
+            align: 'center'
+        },
+        {
+            title: 'level',
+            dataIndex: 'level',
+            key: 'level',
+            align: 'center'
+        },
+        {
+            title: 'name',
+            dataIndex: 'name',
+            key: 'name',
+            align: 'center'
+        }
+    ]
+}

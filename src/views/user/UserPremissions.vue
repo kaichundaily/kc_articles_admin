@@ -1,7 +1,8 @@
 <script setup>
 import { ref } from "vue";
-import { getUserTreeList } from "@/api/user.js";
-import {message} from "ant-design-vue";
+import { getUserRouter, getUserTreeList } from "@/api/user.js";
+import { message } from "ant-design-vue";
+import { userRouterTableColumns } from "@/utils/columns.js";
 
 const expandedKeys = ref([])
 const selectedKeys = ref([])
@@ -63,6 +64,36 @@ const treeColHeight = (num) => {
 const tableColHeight = (num) => {
   return num / 100 * window.innerHeight - 96 + 'px'
 }
+
+
+// 表格相关
+const tableData = ref([])
+const tableLoading = ref(false)
+const tablePagination = ref({
+  current: 1,
+  pageSize: 10,
+  total: 0,
+  showSizeChanger: true,
+  pageSizeOptions: ['2','5','10','20','50'],
+  onChange: (page, size) => {
+    tablePagination.value.current = page
+    tablePagination.value.pageSize = size
+    getUserRouterTable(tablePagination.value.current, tablePagination.value.pageSize,selectedKeys.value[0])
+  }
+})
+const tableColumns = userRouterTableColumns()
+
+const getUserRouterTable = async (page, size, id) => {
+  tableLoading.value = true
+  await getUserRouter(page, size, id).then(() => {
+
+  }).catch(() => {
+
+  }).finally(() => {
+    tableLoading.value = false
+  })
+
+}
 </script>
 
 <template>
@@ -71,7 +102,7 @@ const tableColHeight = (num) => {
       <a-col :span="4">
         <a-row>
           <a-col :span="24" class="title">
-            <span>title</span>
+            <span>User Tree</span>
           </a-col>
           <a-col :span="24" :style="{ height: treeColHeight(90),backgroundColor: 'rgb(255, 255, 255)', margin: '10px 0px 0px 0px', padding: '20px', borderRadius: '15px' }">
             <a-tree
@@ -85,7 +116,15 @@ const tableColHeight = (num) => {
         </a-row>
       </a-col>
       <a-col :span="20" :style="{ height: tableColHeight(100), backgroundColor: 'rgb(255, 255, 255)', borderRadius: '15px', padding: '20px' }">
-        <span>Table</span>
+        <a-table
+          :columns="tableColumns"
+          :data-source="tableData"
+          :loading="tableLoading"
+          :pagination="tablePagination"
+          :bordered="true"
+        >
+
+        </a-table>
       </a-col>
     </a-row>
     <a-row>
@@ -95,6 +134,11 @@ const tableColHeight = (num) => {
 
 <style scoped>
 .title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
   background-color: rgb(255, 255, 255);
   height: 10vh;
   border-radius: 15px;
