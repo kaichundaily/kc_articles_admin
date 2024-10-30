@@ -1,5 +1,7 @@
 <script setup>
-import {ref} from "vue";
+import { ref } from "vue";
+import { getUserTreeList } from "@/api/user.js";
+import {message} from "ant-design-vue";
 
 const expandedKeys = ref([])
 const selectedKeys = ref([])
@@ -8,18 +10,51 @@ const treeData = ref([
   {
     title: "admin",
     key: 0,
-    children: [
-      {
-        title: "admin1",
-        key: 1,
-        isLeaf: true,
-      }
-    ]
   }
 ])
-
-const onLoadData = async (treeNode) => {
-  return
+// 节点被展开时
+const onLoadData = (treeNode) => {
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async resolve => {
+    if (treeNode.dataRef.children && treeNode.data.children.length > 0) {
+      resolve()
+      return
+    }
+    let userList = []
+    const result = await getUserTreeList(treeNode.dataRef.title)
+    if (result.code === 200 && result.data.len > 0) {
+      result.data.tree.forEach((item) => {
+        if (item.grade === 2) {
+          userList.push({
+            title: item.username,
+            key: item.id,
+            isLeaf: true
+          })
+        } else {
+          userList.push({
+            title: item.username,
+            key: item.id,
+            isLeaf: false
+          })
+        }
+      })
+      treeNode.dataRef.children = userList
+      treeData.value = [...treeData.value]
+      resolve()
+      return
+    } else {
+      message.warning("未发现子用户")
+      treeNode.dataRef.children = []
+      treeData.value = [...treeData.value]
+      resolve()
+      return
+    }
+  })
+}
+// 节点被点击时
+const onSelected = (onSelectKeys, e) => {
+  console.log(treeData.value)
+  console.log(e)
 }
 
 const treeColHeight = (num) => {
@@ -44,6 +79,7 @@ const tableColHeight = (num) => {
                 v-model:selectedKeys="selectedKeys"
                 :load-data="onLoadData"
                 :tree-data="treeData"
+                @select="onSelected"
             />
           </a-col>
         </a-row>

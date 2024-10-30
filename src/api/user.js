@@ -61,3 +61,12 @@ export const getManagerList = async (grade) => {
         }
     })
 }
+
+// 根据level获取子用户
+export const getUserTreeList = async (level) => {
+    return await request.get("/api/getUserTree", {
+        params: {
+            level
+        }
+    })
+}
