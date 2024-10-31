@@ -1,12 +1,11 @@
 <script setup>
 import { loginFormRules } from '@/utils/rules.js';
 import { ref } from "vue";
-import { useMenuStore, useRouterStore, useUserStore } from "@/stores/index.js";
+import { useMenuStore, useUserStore } from "@/stores/index.js";
 import { useRouter } from "vue-router";
 import { userLoginService } from '@/api/user.js';
 import { message } from "ant-design-vue";
 import { getRouters } from "@/api/router.js";
-import { convertToDynamicImport } from "@/utils/addRouter.js";
 
 const rules = loginFormRules()
 const formModel = ref({
@@ -14,7 +13,6 @@ const formModel = ref({
   password: ''
 })
 const form = ref()
-const routerStore = useRouterStore()
 const userStore = useUserStore()
 const menuStore = useMenuStore()
 const router = useRouter()
@@ -31,7 +29,6 @@ const login = async () => {
       grade: result.data.grade
     })
     const res = await getRouters(result.data.id)
-    console.log(res.data)
     menuStore.setMenuList(res.data)
     message.success("登陆成功")
     await router.push("/")
