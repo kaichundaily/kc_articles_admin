@@ -84,13 +84,13 @@ export function userRouterTableColumns() {
     return [
         {
             title: 'ID',
-            dataIndex: 'ID',
+            dataIndex: 'id',
             key: 'id',
             align: 'center'
         },
         {
             title: '类型',
-            dataIndex: '类型',
+            dataIndex: 'type',
             key: 'type',
             align: 'center'
         },
@@ -101,7 +101,13 @@ export function userRouterTableColumns() {
             align: 'center'
         },
         {
-            title: 'name',
+            title: '昵称',
+            dataIndex: 'nickname',
+            key: 'nickname',
+            align: 'center'
+        },
+        {
+            title: '名称',
             dataIndex: 'name',
             key: 'name',
             align: 'center'

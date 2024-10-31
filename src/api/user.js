@@ -70,14 +70,3 @@ export const getUserTreeList = async (level) => {
         }
     })
 }
-
-// 获取用的的路由权限
-export const getUserRouter = async (page, size, id) => {
-    return await request.get("", {
-        params: {
-            page,
-            size,
-            id
-        }
-    })
-}

@@ -1,16 +1,19 @@
 <script setup>
 import { ref } from "vue";
-import { getUserRouter, getUserTreeList } from "@/api/user.js";
+import { getUserTreeList } from "@/api/user.js";
 import { message } from "ant-design-vue";
 import { userRouterTableColumns } from "@/utils/columns.js";
+import { getUserRouter } from "@/api/router.js";
 
 const expandedKeys = ref([])
 const selectedKeys = ref([])
-
+const selectedNode = ref()
 const treeData = ref([
   {
     title: "admin",
     key: 0,
+    username: "admin",
+    uid: "1844583280532262912"
   }
 ])
 // 节点被展开时
@@ -22,19 +25,23 @@ const onLoadData = (treeNode) => {
       return
     }
     let userList = []
-    const result = await getUserTreeList(treeNode.dataRef.title)
+    const result = await getUserTreeList(treeNode.dataRef.username)
     if (result.code === 200 && result.data.len > 0) {
       result.data.tree.forEach((item) => {
         if (item.grade === 2) {
           userList.push({
-            title: item.username,
+            title: item.nickname,
             key: item.id,
+            username: item.username,
+            uid: item.id,
             isLeaf: true
           })
         } else {
           userList.push({
-            title: item.username,
+            title: item.nickname,
             key: item.id,
+            username: item.username,
+            uid: item.id,
             isLeaf: false
           })
         }
@@ -53,9 +60,9 @@ const onLoadData = (treeNode) => {
   })
 }
 // 节点被点击时
-const onSelected = (onSelectKeys, e) => {
-  console.log(treeData.value)
-  console.log(e)
+const onSelected = async (onSelectKeys, e) => {
+  selectedNode.value = e.node
+  await getUserRouterTable(1, 10 , e.node.uid)
 }
 
 const treeColHeight = (num) => {
@@ -78,17 +85,23 @@ const tablePagination = ref({
   onChange: (page, size) => {
     tablePagination.value.current = page
     tablePagination.value.pageSize = size
-    getUserRouterTable(tablePagination.value.current, tablePagination.value.pageSize,selectedKeys.value[0])
+    getUserRouterTable(tablePagination.value.current,tablePagination.value.pageSize, selectedNode.value.uid)
   }
 })
 const tableColumns = userRouterTableColumns()
 
 const getUserRouterTable = async (page, size, id) => {
   tableLoading.value = true
-  await getUserRouter(page, size, id).then(() => {
-
-  }).catch(() => {
-
+  await getUserRouter(page, size, id).then((result) => {
+    if (result.code === 200) {
+      tableData.value = result.data.list
+      tablePagination.value.total = result.data.total
+      message.success(result.message)
+    } else {
+      message.warning(result.message)
+    }
+  }).catch((err) => {
+    message.warning(err.toString())
   }).finally(() => {
     tableLoading.value = false
   })
