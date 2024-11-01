@@ -70,3 +70,8 @@ export const getUserTreeList = async (level) => {
         }
     })
 }
+
+// 检验token是否过期
+export const tokenIsOk = async () => {
+    return await request.get("/api/ping")
+}
