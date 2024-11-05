@@ -34,6 +34,7 @@ const onLoadData = (treeNode) => {
             key: item.id,
             username: item.username,
             uid: item.id,
+            leveluid: treeNode.dataRef.uid,
             isLeaf: true
           })
         } else {
@@ -42,6 +43,7 @@ const onLoadData = (treeNode) => {
             key: item.id,
             username: item.username,
             uid: item.id,
+            leveluid: treeNode.dataRef.uid,
             isLeaf: false
           })
         }

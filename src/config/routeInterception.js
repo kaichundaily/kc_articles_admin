@@ -17,7 +17,13 @@ router.beforeEach((to, from, next) => {
       if (routerStore.isAddRouter) {
         next()
       } else {
+
         const menus =  menuStore.menuList
+        console.log(menus)
+        if (menus === null) {
+          next()
+          return
+        }
         const routes = convertToDynamicImport(menus)
         routes.forEach((route) => {
           router.addRoute('Layout', route)
