@@ -83,34 +83,27 @@ export function articleTableColumns() {
 export function userRouterTableColumns() {
     return [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-            align: 'center'
-        },
-        {
             title: '类型',
             dataIndex: 'type',
             key: 'type',
-            align: 'center'
         },
         {
             title: 'level',
             dataIndex: 'level',
             key: 'level',
-            align: 'center'
+            width: '20%'
         },
         {
             title: '昵称',
             dataIndex: 'nickname',
             key: 'nickname',
-            align: 'center'
+            width: '20%'
         },
         {
             title: '名称',
             dataIndex: 'name',
             key: 'name',
-            align: 'center'
+            width: '20%'
         }
     ]
 }

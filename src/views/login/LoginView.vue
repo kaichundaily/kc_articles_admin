@@ -26,7 +26,8 @@ const login = async () => {
       id: result.data.id,
       username: result.data.username,
       avatar: result.data.avatar,
-      grade: result.data.grade
+      grade: result.data.grade,
+      nickname: result.data.nickname,
     })
     const res = await getRouters(result.data.id)
     menuStore.setMenuList(res.data)

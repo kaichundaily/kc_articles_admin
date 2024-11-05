@@ -4,18 +4,25 @@ import { getUserTreeList } from "@/api/user.js";
 import { message } from "ant-design-vue";
 import { userRouterTableColumns } from "@/utils/columns.js";
 import { getUserRouter } from "@/api/router.js";
+import {useUserStore} from "@/stores/index.js";
 
 const expandedKeys = ref([])
 const selectedKeys = ref([])
 const selectedNode = ref()
-const treeData = ref([
-  {
-    title: "admin",
-    key: 0,
-    username: "admin",
-    uid: "1844583280532262912"
-  }
-])
+const treeData = ref([])
+
+const userStore = useUserStore()
+
+const initTreeData = () => {
+  treeData.value.push({
+    title: userStore.userInfo.nickname,
+    key: userStore.userInfo.grade,
+    username: userStore.userInfo.username,
+    uid: userStore.userInfo.id,
+  })
+}
+
+initTreeData()
 // 节点被展开时
 const onLoadData = (treeNode) => {
   // eslint-disable-next-line no-async-promise-executor
