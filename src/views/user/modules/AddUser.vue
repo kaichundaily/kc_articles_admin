@@ -55,6 +55,7 @@ watch(mark,(newValue,oldValue) => {
   if (userInfo.grade === 0) {
     switch (mark.value) {
       case "管理员":
+        levels.value = []
         level.value = userInfo.username
         break
       case "普通账号":
