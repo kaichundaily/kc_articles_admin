@@ -19,7 +19,6 @@ router.beforeEach((to, from, next) => {
       } else {
 
         const menus =  menuStore.menuList
-        console.log(menus)
         if (menus === null) {
           next()
           return

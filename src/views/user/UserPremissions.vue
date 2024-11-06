@@ -5,6 +5,7 @@ import { message } from "ant-design-vue";
 import { userRouterTableColumns } from "@/utils/columns.js";
 import { getUserRouter } from "@/api/router.js";
 import {useUserStore} from "@/stores/index.js";
+import {CheckOutlined, CloseOutlined} from "@ant-design/icons-vue";
 
 const expandedKeys = ref([])
 const selectedKeys = ref([])
@@ -71,6 +72,7 @@ const onLoadData = (treeNode) => {
 // 节点被点击时
 const onSelected = async (onSelectKeys, e) => {
   selectedNode.value = e.node
+  console.log(e.node)
   await getUserRouterTable(1, 10 , e.node.uid)
 }
 
@@ -114,7 +116,27 @@ const getUserRouterTable = async (page, size, id) => {
   }).finally(() => {
     tableLoading.value = false
   })
+}
+// 展开行
+const expanded_Keys = ref([])
+const onExpand = (expanded, record) => {
+  const index = expanded_Keys.value.indexOf(record.id)
+  if (index === -1) {
+    expanded_Keys.value.push(record.id)
+  } else {
+    expanded_Keys.value.splice(index, 1)
+  }
+  console.log(expanded_Keys.value)
+}
 
+
+// 路由权限
+const changeStatus = (status) => {
+  if (selectedNode.value.username === userStore.userInfo.username) {
+    message.warning("只能修改子账户")
+    return
+  }
+  console.log(status === 1 ? 0 : 1)
 }
 </script>
 
@@ -143,9 +165,18 @@ const getUserRouterTable = async (page, size, id) => {
           :data-source="tableData"
           :loading="tableLoading"
           :pagination="tablePagination"
-          :bordered="true"
+          @expand="onExpand"
+          rowKey="id"
+          v-model:expandedRowKeys="expanded_Keys"
         >
-
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'status'">
+              <a-switch @click="changeStatus(record.status)" :checked="record.status === 1">
+                <template #checkedChildren><check-outlined/></template>
+                <template #unCheckedChildren><close-outlined /></template>
+              </a-switch>
+            </template>
+          </template>
         </a-table>
       </a-col>
     </a-row>
