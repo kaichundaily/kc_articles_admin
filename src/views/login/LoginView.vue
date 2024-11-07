@@ -19,21 +19,22 @@ const router = useRouter()
 
 const login = async () => {
   await form.value.validate()
-  const result = await userLoginService(formModel.value)
-  if (result.code === 200) {
-    userStore.setToken(result.data.token)
-    userStore.setUserInfo({
-      id: result.data.id,
-      username: result.data.username,
-      avatar: result.data.avatar,
-      grade: result.data.grade,
-      nickname: result.data.nickname,
-    })
-    const res = await getRouters(result.data.id)
-    menuStore.setMenuList(res.data)
-    message.success("登陆成功")
-    await router.push("/")
-  }
+  await userLoginService(formModel.value).then(async (result) => {
+      userStore.setToken(result.data.token)
+      userStore.setUserInfo({
+        id: result.data.id,
+        username: result.data.username,
+        avatar: result.data.avatar,
+        grade: result.data.grade,
+        nickname: result.data.nickname,
+      })
+      const res = await getRouters(result.data.id)
+      menuStore.setMenuList(res.data)
+      message.success("登陆成功")
+      await router.push("/")
+  }).catch((err) => {
+    message.warning(err.message)
+  })
 }
 
 </script>
