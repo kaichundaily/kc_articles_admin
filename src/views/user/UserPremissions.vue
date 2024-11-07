@@ -20,12 +20,14 @@ const initTreeData = () => {
     key: userStore.userInfo.grade,
     username: userStore.userInfo.username,
     uid: userStore.userInfo.id,
+    leveluid: '0',
   })
 }
 
 initTreeData()
 // 节点被展开时
 const onLoadData = (treeNode) => {
+  console.log(treeNode)
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async resolve => {
     if (treeNode.dataRef.children && treeNode.data.children.length > 0) {
@@ -73,7 +75,7 @@ const onLoadData = (treeNode) => {
 const onSelected = async (onSelectKeys, e) => {
   selectedNode.value = e.node
   console.log(e.node)
-  await getUserRouterTable(1, 10 , e.node.uid)
+  await getUserRouterTable(1, 10 , e.node.uid, e.node.leveluid)
 }
 
 const treeColHeight = (num) => {
@@ -101,9 +103,9 @@ const tablePagination = ref({
 })
 const tableColumns = userRouterTableColumns()
 
-const getUserRouterTable = async (page, size, id) => {
+const getUserRouterTable = async (page, size, child_uid, father_uid) => {
   tableLoading.value = true
-  await getUserRouter(page, size, id).then((result) => {
+  await getUserRouter(page, size, child_uid, father_uid).then((result) => {
     if (result.code === 200) {
       tableData.value = result.data.list
       tablePagination.value.total = result.data.total

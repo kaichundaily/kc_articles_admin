@@ -35,6 +35,18 @@ export function addUserRules() {
                 trigger: 'blur'
             }
         ],
+        nickname: [
+            {
+                required: true,
+                message: "请输入昵称",
+                trigger: 'change'
+            },
+            {
+                pattern: /^[a-zA-Z0-9]{3,10}$/,
+                message: "昵称只能是字母最短3,最长10",
+                trigger: 'blur'
+            }
+        ],
         username: [
             {
                 required: true,
@@ -43,7 +55,7 @@ export function addUserRules() {
             },
             {
                 pattern: /^[a-zA-Z0-9]{3,10}$/,
-                message: "用户名职能是字母最短3,最长10",
+                message: "用户名只能是字母最短3,最长10",
                 trigger: 'blur'
             }
         ],

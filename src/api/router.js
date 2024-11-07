@@ -11,10 +11,11 @@ export const getRouters = async ( id ) => {
 }
 
 // 获取用的的路由权限
-export const getUserRouter = async (page, size, id) => {
+export const getUserRouter = async (page, size, childuid, fatheruid) => {
     return await request.get("/api/getUserRouterForPage", {
         params: {
-            id,
+            childuid,
+            fatheruid,
             page,
             size,
         }

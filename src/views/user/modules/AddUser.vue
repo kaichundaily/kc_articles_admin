@@ -16,6 +16,7 @@ const userInfo = userStore.userInfo
 
 const mark = ref("")
 const level = ref("")
+const nickname = ref("")
 const username = ref("")
 const password = ref("")
 const confirmPassword = ref("")
@@ -64,6 +65,7 @@ watch(mark,(newValue,oldValue) => {
         break
     }
   } else {
+    levels.value = []
     level.value = userInfo.username
   }
 })
@@ -73,6 +75,7 @@ watch(mark,(newValue,oldValue) => {
 const closeSubmit = () => {
   mark.value = ""
   level.value = ""
+  nickname.value = ""
   username.value = ""
   password.value = ""
   confirmPassword.value = ""
@@ -82,6 +85,11 @@ const closeSubmit = () => {
 }
 // 提交创建用户
 const submit = async () => {
+
+  if (nickname.value === "") {
+    message.error("请填写昵称")
+    return
+  }
   if (username.value === "") {
     message.error("请填写用户名")
     return
@@ -103,6 +111,7 @@ const submit = async () => {
     return
   }
   await addUser({
+    "nickname": nickname.value,
     "username": username.value,
     "password": password.value,
     "mark": mark.value,
@@ -151,6 +160,14 @@ const submit = async () => {
           </template>
           <a-select-option v-for="(value, index) in levels" :value="value" :key="index">{{ value }}</a-select-option>
         </a-select>
+      </a-form-item>
+      <a-form-item name="username" :rules="formRules.nickname">
+        <div>昵称:</div>
+        <a-input v-model:value="nickname" placeholder="请输入昵称">
+          <template #prefix>
+            <UserOutlined class="site-form-item-icon" />
+          </template>
+        </a-input>
       </a-form-item>
       <a-form-item name="username" :rules="formRules.username">
         <div>账户:</div>
