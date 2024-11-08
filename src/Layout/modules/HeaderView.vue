@@ -5,6 +5,7 @@ import { ref } from "vue";
 import { revisePasswordRules } from "@/utils/rules.js";
 import { message } from "ant-design-vue";
 import { updatePassword } from "@/api/user.js";
+import { DeleImg, UploadImage } from "@/api/file.js";
 
 const router = useRouter()
 const useStore = useUserStore()
@@ -92,6 +93,44 @@ const closeSubmit = () => {
     verifyPassword: ""
   }
 }
+
+// 修改头像
+const showAvatar = ref(false)
+const newAvatar = ref("")
+
+const closeAvatar = () => {
+  if (newAvatar.value) {
+    DeleImg(newAvatar.value)
+  }
+  file_list.value = []
+  showAvatar.value = false
+}
+
+const file_list = ref([])
+const hasAvatar = () => {
+  if (useStore.userInfo.avatar) {
+    file_list.value.push({
+      name: '旧头像',
+      url: useStore.userInfo.avatar,
+      status: 'done'
+    })
+  }
+}
+hasAvatar()
+
+// 上传头像
+const uploadAvatar = async ({ file, onSuccess, onError }) => {
+  await UploadImage(file).then((result) => {
+    newAvatar.value = result.data.url
+    file_list.value.push({name: '新头像',url: result.data.url,status: 'done'})
+  }).catch((err) => {
+    message.warning("上传失败")
+  })
+}
+
+const handChange = (info) => {
+  file_list.value = info.fileList.filter(file => file.status === 'done')
+}
 </script>
 
 <template>
@@ -122,7 +161,11 @@ const closeSubmit = () => {
               <FormOutlined />
               修改密码
             </a-menu-item>
-            <a-menu-item key="2" @click="showModel">
+            <a-menu-item key="2" @click="showAvatar = true">
+              <FileImageOutlined />
+              修改头像
+            </a-menu-item>
+            <a-menu-item key="3" @click="showModel">
               <LogoutOutlined />
               退出登录
             </a-menu-item>
@@ -180,6 +223,28 @@ const closeSubmit = () => {
           </a-form-item>
         </a-form>
       </a-modal>
+<!--      修改密码-->
+      <a-modal
+          :open="showAvatar"
+          title="修改头像"
+          cancel-text="取消"
+          ok-text="确认"
+          @cancel="closeAvatar"
+          @ok=""
+      >
+        <a-upload
+            v-model:file-list="file_list"
+            list-type="picture"
+            class="upload-list-inline"
+            :custom-request="uploadAvatar"
+            @change="handChange"
+        >
+          <a-button>
+            <upload-outlined></upload-outlined>
+            upload
+          </a-button>
+        </a-upload>
+      </a-modal>
     </div>
   </div>
 </template>
@@ -205,5 +270,14 @@ const closeSubmit = () => {
       margin-right: 10px;
     }
   }
+}
+
+.upload-list-inline :deep(.ant-upload-list-item) {
+  float: left;
+  width: 150px;
+  margin-right: 8px;
+}
+.upload-list-inline [class*='-upload-list-rtl'] :deep(.ant-upload-list-item) {
+  float: right;
 }
 </style>
