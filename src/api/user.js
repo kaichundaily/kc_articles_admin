@@ -75,3 +75,15 @@ export const getUserTreeList = async (level) => {
 export const tokenIsOk = async () => {
     return await request.get("/api/ping")
 }
+
+// 修改头像
+export const updateAvatar = async (ID, avatar) => {
+    return await request.post("/api/updateAvatar", {
+        uid: ID,
+        url: avatar
+    },{
+        headers: {
+            'Content-Type': 'application/json' // 或者使用 multipart/form-data 如果有文件上传
+        }
+    })
+}

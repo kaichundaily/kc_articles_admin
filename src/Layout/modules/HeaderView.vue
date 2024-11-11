@@ -4,7 +4,7 @@ import { useMenuStore, useRouterStore, useUserStore } from "@/stores/index.js";
 import { ref } from "vue";
 import { revisePasswordRules } from "@/utils/rules.js";
 import { message } from "ant-design-vue";
-import { updatePassword } from "@/api/user.js";
+import {updateAvatar, updatePassword} from "@/api/user.js";
 import { DeleImg, UploadImage } from "@/api/file.js";
 
 const router = useRouter()
@@ -131,6 +131,26 @@ const uploadAvatar = async ({ file, onSuccess, onError }) => {
 const handChange = (info) => {
   file_list.value = info.fileList.filter(file => file.status === 'done')
 }
+// 修改头像
+const avatarSubmit = async () => {
+  await updateAvatar(useStore.userInfo.id, newAvatar.value).then(async (result) => {
+    message.success("修改成功")
+    await DeleImg(useStore.userInfo.avatar)
+    useStore.setUserInfo({
+      id: useStore.userInfo.id,
+      username: useStore.userInfo.username,
+      avatar: newAvatar.value,
+      grade: useStore.userInfo.grade,
+      nickname: useStore.userInfo.nickname,
+    })
+    newAvatar.value = ""
+  }).catch(async (err) => {
+    message.warning("修改失败")
+    await DeleImg(newAvatar.value)
+  }).finally(() => {
+    closeAvatar()
+  })
+}
 </script>
 
 <template>
@@ -230,7 +250,7 @@ const handChange = (info) => {
           cancel-text="取消"
           ok-text="确认"
           @cancel="closeAvatar"
-          @ok=""
+          @ok="avatarSubmit"
       >
         <a-upload
             v-model:file-list="file_list"
