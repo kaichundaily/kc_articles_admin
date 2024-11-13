@@ -108,6 +108,7 @@ const closeAvatar = () => {
 
 const file_list = ref([])
 const hasAvatar = () => {
+  showAvatar.value = true
   if (useStore.userInfo.avatar) {
     file_list.value.push({
       name: '旧头像',
@@ -116,7 +117,6 @@ const hasAvatar = () => {
     })
   }
 }
-hasAvatar()
 
 // 上传头像
 const uploadAvatar = async ({ file, onSuccess, onError }) => {
@@ -135,7 +135,9 @@ const handChange = (info) => {
 const avatarSubmit = async () => {
   await updateAvatar(useStore.userInfo.id, newAvatar.value).then(async (result) => {
     message.success("修改成功")
-    await DeleImg(useStore.userInfo.avatar)
+    if (useStore.userInfo.avatar) {
+      await DeleImg(useStore.userInfo.avatar)
+    }
     useStore.setUserInfo({
       id: useStore.userInfo.id,
       username: useStore.userInfo.username,
@@ -146,7 +148,6 @@ const avatarSubmit = async () => {
     newAvatar.value = ""
   }).catch(async (err) => {
     message.warning("修改失败")
-    await DeleImg(newAvatar.value)
   }).finally(() => {
     closeAvatar()
   })
@@ -181,7 +182,7 @@ const avatarSubmit = async () => {
               <FormOutlined />
               修改密码
             </a-menu-item>
-            <a-menu-item key="2" @click="showAvatar = true">
+            <a-menu-item key="2" @click="hasAvatar">
               <FileImageOutlined />
               修改头像
             </a-menu-item>
