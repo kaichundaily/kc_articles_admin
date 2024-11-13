@@ -21,3 +21,12 @@ export const getUserRouter = async (page, size, childuid, fatheruid) => {
         }
     })
 }
+
+// 修改用户权限
+export const updateUserRouter = async (data) => {
+    return await request.post("/api/updateUserRouter", data,{
+        headers: {
+            'Content-Type': 'application/json' // 或者使用 multipart/form-data 如果有文件上传
+        }
+    })
+}

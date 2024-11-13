@@ -3,9 +3,9 @@ import { ref } from "vue";
 import { getUserTreeList } from "@/api/user.js";
 import { message } from "ant-design-vue";
 import { userRouterTableColumns } from "@/utils/columns.js";
-import { getUserRouter } from "@/api/router.js";
-import {useUserStore} from "@/stores/index.js";
-import {CheckOutlined, CloseOutlined} from "@ant-design/icons-vue";
+import { getUserRouter, updateUserRouter } from "@/api/router.js";
+import { useUserStore } from "@/stores/index.js";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons-vue";
 
 const expandedKeys = ref([])
 const selectedKeys = ref([])
@@ -98,7 +98,7 @@ const tablePagination = ref({
   onChange: (page, size) => {
     tablePagination.value.current = page
     tablePagination.value.pageSize = size
-    getUserRouterTable(tablePagination.value.current,tablePagination.value.pageSize, selectedNode.value.uid)
+    getUserRouterTable(tablePagination.value.current,tablePagination.value.pageSize, selectedNode.value.uid,selectedNode.value.leveluid)
   }
 })
 const tableColumns = userRouterTableColumns()
@@ -133,12 +133,29 @@ const onExpand = (expanded, record) => {
 
 
 // 路由权限
-const changeStatus = (status) => {
+const changeStatus = async (record) => {
   if (selectedNode.value.username === userStore.userInfo.username) {
     message.warning("只能修改子账户")
     return
   }
-  console.log(status === 1 ? 0 : 1)
+  if (record.level === "one" && record.name === "dashboard") {
+    message.warning("主页不能被修改")
+    return
+  }
+  console.log(record)
+  console.log(record.status === 1 ? 0 : 1)
+  const result = await updateUserRouter({
+    uid: selectedNode.value.uid,
+    luid: selectedNode.value.leveluid,
+    name: record.name,
+    type: record.type,
+    status: record.status === 1 ? 0 : 1
+  })
+  if (result.code !== 200) {
+    message.success(result.message)
+    return
+  }
+  await getUserRouterTable(tablePagination.value.current,tablePagination.value.pageSize, selectedNode.value.uid, selectedNode.value.leveluid)
 }
 </script>
 
@@ -173,7 +190,7 @@ const changeStatus = (status) => {
         >
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'status'">
-              <a-switch @click="changeStatus(record.status)" :checked="record.status === 1">
+              <a-switch @click="changeStatus(record)" :checked="record.status === 1">
                 <template #checkedChildren><check-outlined/></template>
                 <template #unCheckedChildren><close-outlined /></template>
               </a-switch>
