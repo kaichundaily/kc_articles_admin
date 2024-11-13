@@ -7,8 +7,9 @@ import { CheckOutlined, CloseOutlined } from "@ant-design/icons-vue";
 import AddUser from "@/views/user/modules/AddUser.vue";
 import { updatePassword } from "@/api/user.js";
 import { revisePasswordRules } from "@/utils/rules.js"
+import { useUserStore } from "@/stores/index.js";
 
-
+const userStore = useUserStore()
 // table`s header
 const columns = userTableColumns()
 
@@ -29,7 +30,7 @@ const data = ref([])
 const loading = ref(false)
 const getAllUserInfo = async (page, size) => {
   loading.value = true
-  await getUsers(page, size).then((result) => {
+  await getUsers(page, size, userStore.userInfo.id).then((result) => {
     data.value = result.data.values
     pagination.value.total = result.data.total
   }).catch((error) => {

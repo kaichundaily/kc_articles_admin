@@ -11,11 +11,12 @@ export const userLoginService = async ({ username, password }) => {
     })
 }
 // 获取所有用户信息
-export const getUsers = async (page, size) =>  {
+export const getUsers = async (page, size,uid) =>  {
     return await request.get('/api/getUsers', {
         params: {
             page,
-            size
+            size,
+            uid
         }
     })
 }
