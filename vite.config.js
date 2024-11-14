@@ -18,7 +18,8 @@ export default defineConfig({
       ]
     })
   ],
-  base: './',
+  // base: '/',  打包时用"/"
+  base: "./", // 测试环境用"./base"
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
