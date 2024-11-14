@@ -26,8 +26,9 @@ const logout = async () => {
   await useStore.removeToken()
   await mentStore.removeMenuList()
   await routerStore.commitRouter(false)
-  await location.reload()
-  await router.push('/login')
+  await router.push('/login').then(() => {
+    location.reload()
+  })
 }
 //提示框相关
 const isShow = ref(false)
