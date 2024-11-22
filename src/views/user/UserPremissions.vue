@@ -74,7 +74,7 @@ const onLoadData = (treeNode) => {
 // 节点被点击时
 const onSelected = async (onSelectKeys, e) => {
   selectedNode.value = e.node
-  console.log(e.node)
+  // console.log(e.node)
   await getUserRouterTable(1, 10 , e.node.uid, e.node.leveluid)
 }
 
@@ -128,7 +128,7 @@ const onExpand = (expanded, record) => {
   } else {
     expanded_Keys.value.splice(index, 1)
   }
-  console.log(expanded_Keys.value)
+  // console.log(expanded_Keys.value)
 }
 
 

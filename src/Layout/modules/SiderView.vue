@@ -22,7 +22,7 @@ const  routeToMenus = (routes) => {
     const menuItem = {
       key: rou.meta.key,
       label: rou.meta.title,
-      route: rou.path,
+      path: rou.path,
       icon: rou.meta.icon,
       children: []
     }
@@ -31,7 +31,7 @@ const  routeToMenus = (routes) => {
         menuItem.children.push({
           key: child.meta.key,
           label: child.meta.title,
-          route: child.path,
+          path: child.path,
         })
       })
     } else {
@@ -44,9 +44,9 @@ const  routeToMenus = (routes) => {
 getRouterList()
 items.value = routeToMenus(routerList.value)
 // 获得菜单列表
-const handleMenuClick = async (info) => {
-  selectedKeys.value = [info.key]
-  await router.push(info.domEvent.target.__vueParentComponent.attrs.route)
+const handleMenuClick = async (node) => {
+  selectedKeys.value = [node.key]
+  await router.push(node.item.path)
 };
 
 
