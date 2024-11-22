@@ -1,5 +1,8 @@
 const articleMap = new Map()
 
+import { h } from 'vue'
+import { SnippetsOutlined } from "@ant-design/icons-vue";
+
 // 3.文章页
 articleMap.set('article', {
     path: '/article',
@@ -7,7 +10,7 @@ articleMap.set('article', {
     meta: {
         title: '文章',
         key: '3',
-        icon: 'SnippetsOutlined'
+        icon: h(SnippetsOutlined)
     },
     children: Array()
 })

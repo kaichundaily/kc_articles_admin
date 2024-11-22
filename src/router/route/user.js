@@ -1,5 +1,7 @@
 const userMap = new Map()
 
+import { h } from 'vue'
+import { UserOutlined } from "@ant-design/icons-vue";
 
 // 2.user
 userMap.set('user', {
@@ -8,7 +10,7 @@ userMap.set('user', {
     meta: {
         title: '用户',
         key: '2',
-        icon: 'UserOutlined'
+        icon: h(UserOutlined)
     },
     children: Array()
 })

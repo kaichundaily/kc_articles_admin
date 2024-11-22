@@ -1,6 +1,8 @@
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import Login from '@/views/login/LoginView.vue'
 import Layout from '@/Layout/MainLayout.vue'
+import { h } from 'vue'
+import { HomeOutlined } from "@ant-design/icons-vue";
 
 const routes = [
   {
@@ -19,7 +21,7 @@ const routes = [
         meta: {
             title: 'Home',
             key: '1',
-            icon: 'HomeOutlined'
+            icon: h(HomeOutlined)
         }
       }
     ]

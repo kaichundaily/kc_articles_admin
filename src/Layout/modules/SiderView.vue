@@ -1,34 +1,19 @@
 <script setup>
-import {
-  UserOutlined,
-  HomeOutlined,
-  SnippetsOutlined
-} from "@ant-design/icons-vue";
 import Logo from "@/assets/logo.jpg"
-import { h, ref, watch} from "vue";
+import { h, ref } from "vue";
 import { useRouter, useRoute } from "vue-router"; // 引入 useRouter
 import { routeSort, processRouteList } from "@/Layout/js/utils.js";
 
 const router = useRouter(); // 获取 router 实例
-const route = useRoute();
 
 // 菜单列表初始化
 const items = ref([])
 const routerList = ref({})
 // 图标列表
-const iconMap = ref({
-  HomeOutlined,
-  UserOutlined,
-  SnippetsOutlined
-})
 // 获取当前的路由菜单
 // const routers = router.options.routes
 const getRouterList = () => {
   routerList.value = processRouteList(routeSort(router.getRoutes()))
-}
-// 图标的字符转化
-const getIconComponent = (iconName) => {
-  return iconName ? h(iconMap.value[iconName]) : null
 }
 // 路由转菜单
 const  routeToMenus = (routes) => {
@@ -38,7 +23,7 @@ const  routeToMenus = (routes) => {
       key: rou.meta.key,
       label: rou.meta.title,
       route: rou.path,
-      icon: getIconComponent(rou.meta.icon),
+      icon: rou.meta.icon,
       children: []
     }
     if (rou.children && rou.children.length > 0) {
@@ -59,28 +44,9 @@ const  routeToMenus = (routes) => {
 getRouterList()
 items.value = routeToMenus(routerList.value)
 // 获得菜单列表
-// 根据 key 查找菜单项
-const findMenuItemByKey = (key, items) => {
-  for (const item of items) {
-    if (item.key === key) {
-      return item;
-    }
-    if (item.children) {
-      const found = findMenuItemByKey(key, item.children);
-      if (found) {
-        return found;
-      }
-    }
-  }
-  return null;
-};
-// 获取当前菜单的key,并匹配items里的路由并跳转
-const handleMenuClick = (info) => {
-  const selectedItem = findMenuItemByKey(info.key, items.value);
-  // console.log(selectedItem)
-  if (selectedItem && selectedItem.route) {
-    router.push(selectedItem.route);
-  }
+const handleMenuClick = async (info) => {
+  selectedKeys.value = [info.key]
+  await router.push(info.domEvent.target.__vueParentComponent.attrs.route)
 };
 
 
@@ -90,32 +56,6 @@ const selectedKeys = ref([''])
 const openKeys = ref([''])
 
 
-// 监听路由变化实现自动聚焦菜单按钮的功能
-watch(() => route.path, (newPath) => {
-  openKeys.value = [findMenuItemByPath(newPath, items.value).oneKey]
-  selectedKeys.value = [findMenuItemByPath(newPath, items.value).twoKey]
-})
-
-// 获取当前路由一级菜单或者二级菜单的key,若只有一级菜单则给openKeys设置为0
-const findMenuItemByPath = (path, items) => {
-  for (const item of items) {
-    if (item.route === path) {
-      return {
-        oneKey: 0,
-        twoKey: item.key
-      }
-    }
-    if (item.children) {
-      const found = findMenuItemByPath(path, item.children);
-      if (found) {
-        return {
-          oneKey: item.key,
-          twoKey: found.twoKey
-        }
-      }
-    }
-  }
-}
 </script>
 
 <template>
