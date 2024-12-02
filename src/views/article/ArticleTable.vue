@@ -69,12 +69,13 @@ const getAllArticleData = async (page, size) => {
   // 分页获取当前登录用户文章
   await getAllArticle(page, size, userStore.userInfo.id).then((result) => {
     // 若使用table的复选框需要给每一行加上key
-    let resultData = result.data.data
+    let resultData = result.data.articleList
     if (result.data.total === 0) {
       message.warning("还未添加文章")
       loading.value = false
       return
     }
+    console.log(resultData)
     resultData.forEach((item, index) => {
       item.key = index
     })
@@ -223,13 +224,13 @@ const onSelectChange = (selectedRowKeys, selectedRow) => {
           </a-tag>
         </template>
         <template v-else-if="column.key === 'status'">
-          <a-switch @click="changeSwitch(record,'status')" :checked="record.status === 0">
+          <a-switch @click="changeSwitch(record,'status')" :checked="record.status !== 0">
             <template #checkedChildren><check-outlined /></template>
             <template #unCheckedChildren><close-outlined /></template>
           </a-switch>
         </template>
-        <template v-else-if="column.key === 'public'">
-          <a-switch @click="changeSwitch(record,'is_public')" :checked="record.is_public === 0">
+        <template v-else-if="column.key === 'is_public'">
+          <a-switch @click="changeSwitch(record,'is_public')" :checked="record.is_public !== 0">
             <template #checkedChildren><check-outlined /></template>
             <template #unCheckedChildren><close-outlined /></template>
           </a-switch>

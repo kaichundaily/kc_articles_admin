@@ -68,7 +68,7 @@ export function articleTableColumns() {
         {
             title: '公开',
             dataIndex: '公开',
-            key: 'isPublic',
+            key: 'is_public',
             align: 'center'
         },
         {
