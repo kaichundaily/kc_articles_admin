@@ -90,9 +90,6 @@ const deleTag = (removeTag) => {
     </template>
     <a-form>
       <a-form-item>
-        <div>封图:</div>
-      </a-form-item>
-      <a-form-item>
         <div>标题:</div>
         <a-input
           v-model:value="title"

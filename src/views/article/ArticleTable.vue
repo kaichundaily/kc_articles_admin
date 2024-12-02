@@ -70,6 +70,11 @@ const getAllArticleData = async (page, size) => {
   await getAllArticle(page, size, userStore.userInfo.id).then((result) => {
     // 若使用table的复选框需要给每一行加上key
     let resultData = result.data.data
+    if (result.data.total === 0) {
+      message.warning("还未添加文章")
+      loading.value = false
+      return
+    }
     resultData.forEach((item, index) => {
       item.key = index
     })
@@ -86,7 +91,7 @@ const getAllArticleData = async (page, size) => {
 const changeGetAllArticleData = async (page, size) => {
   await getAllArticle(page, size, userStore.userInfo.id).then((result) => {
     // 若使用table的复选框需要给每一行加上key
-    let resultData = result.data.data
+    let resultData = result.data.articleList
     resultData.forEach((item, index) => {
       item.key = index
     })

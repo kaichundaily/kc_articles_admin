@@ -29,12 +29,15 @@ export const isPublicArticle = async (id, number) => {
 // 添加文章
 export const addArticle = async (img,title,tag,id) => {
     let data = {
-        id,
-        articleImg: img,
+        uid: id,
         title: title,
         tag: tag
     }
-    return await request.post("/api/addArticle", data)
+    return await request.post("/api/addArticle", data, {
+        headers: {
+            'Content-Type': 'application/json' // 或者使用 multipart/form-data 如果有文件上传
+        }
+    })
 }
 
 // 编辑文章
