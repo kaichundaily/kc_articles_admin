@@ -112,7 +112,7 @@ const changeGetAllArticleData = async (page, size) => {
 // 文章状态变更相关逻辑
 const changeSwitch = async (record, mode) => {
   loading.value = true
-  console.log(record.id)
+  console.log(record.status)
   switch (mode) {
     case "status":
       await isStatusArticle(record.id, record.status === 1 ? 0 : 1).then(async (result) => {
@@ -129,6 +129,18 @@ const changeSwitch = async (record, mode) => {
       })
       break
     case "is_public":
+      await isPublicArticle(record.id, record.is_public === 1 ? 0 : 1).then(async (result) => {
+        if (result.code === 200) {
+          await getAllArticleData(pagination.value.current,10)
+          message.success("修改成功")
+        } else {
+          message.error("修改失败")
+        }
+      }).catch((err) => {
+        console.log("修改失败:",err)
+      }).finally(() => {
+        loading.value = false
+      })
       break
     default:
       console.log("模式错误")
