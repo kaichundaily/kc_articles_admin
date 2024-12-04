@@ -75,8 +75,14 @@ const getAllArticleData = async (page, size) => {
       loading.value = false
       return
     }
-    console.log(resultData)
     resultData.forEach((item, index) => {
+      console.log(item.status)
+      if (!item.status) {
+        item.status = 0
+      }
+      if (!item.is_public) {
+        item.is_public = 0
+      }
       item.key = index
     })
     data.value = resultData
@@ -106,33 +112,27 @@ const changeGetAllArticleData = async (page, size) => {
 // 文章状态变更相关逻辑
 const changeSwitch = async (record, mode) => {
   loading.value = true
-  if (mode === "status") {
-    await isStatusArticle(record.article_id,record.status === 1 ? 0 : 1).then( async (result) => {
-      if (result.code === 200) {
-        await changeGetAllArticleData(pagination.value.current,10)
-        message.success("修改成功")
-      }
-    }).catch(() => {
-      message.error("修改失败")
-    }).finally(() => {
-      loading.value = false
-    })
-  } else if (mode === "is_public") {
-    if (record.status === 1) {
-      message.error("请先发布文章")
-      loading.value = false
-      return
-    }
-    await isPublicArticle(record.article_id,record.is_public === 1 ? 0 : 1).then(async (result) => {
-      if (result.code === 200) {
-        await changeGetAllArticleData(pagination.value.current,10)
-        message.success("修改成功")
-      }
-    }).catch(() => {
-      message.error("修改失败")
-    }).finally(() => {
-      loading.value = false
-    })
+  console.log(record.id)
+  switch (mode) {
+    case "status":
+      await isStatusArticle(record.id, record.status === 1 ? 0 : 1).then(async (result) => {
+        if (result.code === 200) {
+          await getAllArticleData(pagination.value.current,10)
+          message.success("修改成功")
+        } else {
+          message.error("修改失败")
+        }
+      }).catch((err) => {
+        console.log("修改失败:",err)
+      }).finally(() => {
+        loading.value = false
+      })
+      break
+    case "is_public":
+      break
+    default:
+      console.log("模式错误")
+      break
   }
 }
 
@@ -224,13 +224,13 @@ const onSelectChange = (selectedRowKeys, selectedRow) => {
           </a-tag>
         </template>
         <template v-else-if="column.key === 'status'">
-          <a-switch @click="changeSwitch(record,'status')" :checked="record.status !== 0">
+          <a-switch @click="changeSwitch(record,'status')" :checked="record.status === 1">
             <template #checkedChildren><check-outlined /></template>
             <template #unCheckedChildren><close-outlined /></template>
           </a-switch>
         </template>
         <template v-else-if="column.key === 'is_public'">
-          <a-switch @click="changeSwitch(record,'is_public')" :checked="record.is_public !== 0">
+          <a-switch @click="changeSwitch(record,'is_public')" :checked="record.is_public === 1">
             <template #checkedChildren><check-outlined /></template>
             <template #unCheckedChildren><close-outlined /></template>
           </a-switch>

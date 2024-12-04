@@ -10,12 +10,16 @@ export const getAllArticle = async (page, size, id) => {
     })
 }
 
-export const isStatusArticle = async (id, number) => {
+export const isStatusArticle = async (id, status) => {
     let data = {
-        articleid: id,
-        num: number
+        id,
+        status
     }
-    return await request.post("/api/isStatusArticle", data)
+    return await request.post("/api/isStatusArticle", data, {
+        headers: {
+            'Content-Type': 'application/json' // 或者使用 multipart/form-data 如果有文件上传
+        }
+    })
 }
 
 export const isPublicArticle = async (id, number) => {
