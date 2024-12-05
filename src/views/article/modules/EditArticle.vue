@@ -16,6 +16,7 @@ const title = ref("")
 const showMdEditor = ref(false)
 const content = ref("")
 const articleID = ref("")
+const uid = ref("")
 // 初始化数据
 const initData = () => {
   switch (props.articleData.showMdEditor) {
@@ -24,12 +25,14 @@ const initData = () => {
       showMdEditor.value = props.articleData.showMdEditor
       content.value = props.articleData.content
       articleID.value = props.articleData.id
+      uid.value = props.articleData.uid
       break
     case false:
       title.value = ""
       showMdEditor.value = false
       content.value = ""
       articleID.value = ""
+      uid.value = ""
       break
   }
 }
@@ -37,11 +40,11 @@ const initData = () => {
 const emit = defineEmits(["closeShowEditArticle","submit"])
 
 
-const closeShowEditArticle = () => {
+const closeEditArticle = () => {
   emit("closeShowEditArticle")
 }
 const submit = async () => {
-  await editArticle(articleID.value,content.value).then((result) => {
+  await editArticle(articleID.value, uid.value ,content.value).then((result) => {
     if (result.code === 200) {
       message.success("修改成功")
     }
@@ -78,10 +81,10 @@ watch(props, (newValue, oldValue) => {
       :title="title || '编辑内容'"
       :width="`60%`"
       :open="showMdEditor"
-      @close="closeShowEditArticle"
+      @close="closeEditArticle"
       cancel-text="取消编辑"
       ok-text="提交"
-      @cancel="closeShowEditArticle"
+      @cancel="closeEditArticle"
       @ok="submit"
   >
     <div class="custom-modal" style="height: 800px;">

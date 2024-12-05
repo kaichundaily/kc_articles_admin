@@ -22,14 +22,16 @@ const data = ref([])
 const content = ref("")
 const title = ref("")
 const id = ref("")
+const uid = ref("")
 const showMdEditor = ref(false)
 
 const userStore = useUserStore()
 // 打开编辑
-const openShowEditArticle = (newContent, newTitle, newID) => {
+const openShowEditArticle = (newContent, newTitle, newID, newUid) => {
   content.value = newContent
   title.value = newTitle
   id.value = newID
+  uid.value = newUid
   showMdEditor.value = true
 }
 // 关闭编辑
@@ -37,12 +39,13 @@ const closeShowEditArticle = () => {
   content.value = ""
   title.value = ""
   id.value = ""
+  uid.value = ""
   showMdEditor.value = false
 }
 // 编辑成功
 const submit = async () => {
   await getAllArticle(pagination.value.current, 10, userStore.userInfo.id).then((result) => {
-    data.value = result.data.data
+    data.value = result.data.articleList
     pagination.value.total = result.data.total
   }).catch(() => {
     message.error("表格加载失败")
@@ -248,7 +251,7 @@ const onSelectChange = (selectedRowKeys, selectedRow) => {
           </a-switch>
         </template>
         <template v-else-if="column.key === 'edit'">
-          <a-button type="primary" @click="openShowEditArticle(record.content, record.title, record.article_id)">编辑</a-button>
+          <a-button type="primary" @click="openShowEditArticle(record.content, record.title, record.id, record.uid)">编辑</a-button>
         </template>
       </template>
     </a-table>
@@ -263,7 +266,7 @@ const onSelectChange = (selectedRowKeys, selectedRow) => {
     </a-float-button>
     <!--  文章编辑功能  -->
     <edit-article
-      :articleData="{ id, title, showMdEditor, content }"
+      :articleData="{ id, title, showMdEditor, content, uid }"
       @closeShowEditArticle="closeShowEditArticle"
       @submit="submit"
     />

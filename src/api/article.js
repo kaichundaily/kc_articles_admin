@@ -49,9 +49,10 @@ export const addArticle = async (img,title,tag,id) => {
 }
 
 // 编辑文章
-export const editArticle = async (article_id, content) => {
+export const editArticle = async (id, uid, content) => {
     return await request.post("/api/editArticle", {
-        article_id,
+        id,
+        uid,
         content
     })
 }
