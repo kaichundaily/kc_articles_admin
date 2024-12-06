@@ -162,7 +162,7 @@ const closeAddShow = () => {
 
 const submitAddShow = async () => {
   await getAllArticle(pagination.value.current, 10, userStore.userInfo.id).then((result) => {
-    let resultData = result.data.data
+    let resultData = result.data.articleList
     resultData.forEach((item, index) => {
       item.key = index
     })
@@ -185,7 +185,7 @@ const state = reactive({
 const hasSelected = computed(() => state.selectedRowKeys.length > 0);
 const start = async () => {
   state.loading = true;
-  const articleIdList = state.selectedRow.map(item => item.article_id)
+  const articleIdList = state.selectedRow.map(item => item.id)
   console.log(articleIdList)
   await deleArticle(articleIdList).then((result) => {
     if (result.code === 200) {

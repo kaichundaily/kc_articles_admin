@@ -58,7 +58,7 @@ export const editArticle = async (id, uid, content) => {
 }
 
 export const deleArticle = async (articleIdList) => {
-    return await request.post("/api/deleArticle", articleIdList, {
+    return await request.post("/api/deleteArticle", articleIdList, {
         headers: {
             'Content-Type': 'application/json' // 或者使用 multipart/form-data 如果有文件上传
         }
